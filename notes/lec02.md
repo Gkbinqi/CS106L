@@ -10,7 +10,8 @@
 * we may use `using namespace std;` declaration, which automatically adds **std::**, but thats not a good practice.
 
 ### STL
-STL = Standard Template Library  
+> STL = Standard Template Library  
+
 Which contains TONS of functionality (algorithms, 
 containers, functions, iterators) some of which we 
 will explore in this class  
@@ -18,7 +19,7 @@ The namespace for the STL is std -- std is the abbreviation for standard
 To access elements from the STL use **std::**
 
 ### Types
-C++ Fundamental Types  
+C++ Fundamental Types(primitive types)  
 ```int val = 5; //32 bits```  
 ```char ch = 'F'; //8 bits (usually) ```  
 ```float decimalVal1 = 5.0;  //32 bits (usually)```  
@@ -60,7 +61,8 @@ int, int -> double
 void -> string  
 
 ### Function Overloading
-Define two functions with the same name but different types.  
+> Define two functions with the same name but have different types.  
+
 Core: same name but different function signature.  
 
 ```
@@ -89,7 +91,8 @@ half(3.0) // uses version (2), returns 1.5
 ```
 
 ### Struct
-**struct**: a group of named variables each with their own type. A way to bundle different types together  
+> A group of named variables each with their own type. A way to bundle different types together
+  
 ```
 struct Student {
 	string name; // these are called fields
@@ -122,15 +125,10 @@ std::cout << foundStudent.name << std::endl; // Sarah
 
 ### `std::pair`
 > https://en.cppreference.com/w/cpp/utility/pair
+> An STL built-in struct with two fields of any type  
 
-An STL built-in struct with two fields of any type  
 *Defined in header <utility>*  
-
-template<
-	class T1,
-	class T2
-> struct pair;
-  
+`template <class T1, class T2> struct pair;`
 
 * std::pair is a template: You specify the types of the fields inside <> for each pair object you make  
 * The fields in std::pairs are named first and second
@@ -152,7 +150,7 @@ std::pair<bool, Student> output = lookupStudent(“Julie”);
 ```  
 
 ### Type Deduction with `auto`
-auto: Keyword used in lieu of type when declaring a variable, tells the compiler to deduce the type.  
+> Keyword used in lieu of type when declaring a variable, tells the compiler to deduce the type.  
 > **`auto` does not mean that the variable doesn’t have a type. It means that the type is deduced by the compiler.**    
 
 ```
@@ -163,3 +161,4 @@ auto c = ‘X’; // char
 auto d = “Hello”; // char* (a C string)
 auto e = std::make_pair(3, “Hello”); // std::pair<int, char*>
 ```  
+
