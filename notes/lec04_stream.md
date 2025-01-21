@@ -3,7 +3,7 @@
 
 e.g. exempli gratia 例如    
 
-### **stream** DEF
+### **Stream** DEF
 > An abstraction for input/output.   
 > Streams convert between data and the string representation of data.  
 
@@ -23,10 +23,11 @@ std::cout << s.name << s.age << std::endl; // this works
 // We’ll talk about how to write the << operator for custom types during lecture 11 on Operators!
 ```  
 
-### streams overview
-> `std::cout` is an output stream. It has type `std::ostream`.  
+### Streams Overview
+> `std::cout` means 'console output' while 'c' means character.
 
-Two ways to classify streams:  
+Here we have many types of streams.  
+##### Ways to classify streams:  
 
 First, By Direction:  
 
@@ -36,51 +37,84 @@ First, By Direction:
 
 Second, By Source or Destination:  
 
-* Console streams: Read/write to **console** (ex. ‘std::cout’, console out, ‘std::cin’, console in)  
+* Console streams: Read/write to **console** (ex. ‘std::cout’, console output, ‘std::cin’, console input)  
 * File streams: Read/write to **files** (ex. ‘std::fstream’, ‘std::ifstream’, ‘std::ofstream’)  
 * String streams: Read/write to **strings** (ex. ‘std::stringstream’, ‘std::istringstream’, ‘std::ostringstream’)
 
-### output stream: `std::ostream`, 'std::ofstream'
+What's more, operator `>>` and `<<`  
 
-`std::cout` is the output stream that goes to the console  
-Output Stream have type `std::ostream`  
+* “>>” is the stream extraction operator or simply extraction operator
+	* Used to extract data from a stream and place it into a variable  
+* “<<” is the stream insertion operator or insertion operator  
+	* Used to insert data into a stream usually to output the data to a file, console, or string  
 
+### Output Streams: `std::ostream`, `std::ofstream`
+> `std::cout` is the output stream that goes to the console stream. It has type `std::ostream`.  
+
+##### Output Stream have type `std::ostream`  
 * We can only **send** data to the stream  
 * Interact with the stream using the `<<` operator  
-* Converts any type into string and sends it to the stream  
+* **Converts any type into string and sends it to the stream**  
 ```
 std::cout << 5 << std::endl; 
 // converts int value 5 to string “5”
 // and sends “5” to the console output stream
 ```  
 
-Output File Streams have type `std::ofstream`  
-
+##### Output File Streams have type `std::ofstream`  
 * We can only *send* data to file using the `<<` operator  
-* Converts data of any type into a string and sends it to the file stream  
+* **Converts data of any type into a string and sends it to the file stream** 
 * Must initialize your own ofstream object linked to your file  
 ```
 std::ofstream out(“out.txt”); // variable out is now an ofstream that outputs to out.txt
 out << 5 << std::endl; // out.txt contains 5\n
-```  
-> https://www.onlinegdb.com/A3WW3Ow_l
+```   
 
+More about ofstream is in the code lec04_ofstream.  
+
+##### Details  
+**`std::cout` is a global constant object that you get from `#include <iostream>` that can use directly.**  
+**To use any other output stream, you must first initialize it!**  
+
+### Input Streams
+> `std::cin` is an input stream. It has type `std::istream`
+
+##### Input Streams
+* Have type `std::istream`  
+* You can only receive strings using the `>>` operator  
+* Receives a string from the stream and converts it to data 
+* `std::cin >> a`, here `std::cin` is a `std::istream` and transfer the data to `a`  
+* `std::cin` is the input stream that gets input from the console  
 ```
-#include <iostream>
-#include <fstream>
-
-using namespace std;
-
-int main()
-{
-    std::ofstream out("out.txt");
-
-    // Step 1: Look at out.txt
-    // Step 2: Run code as is, and look at out.txt
-    // Step 3: Comment out lines 22,23; Run; Look at out.txt
-    out << "Hello Sarah" << endl;
-    out << "Are there two lines???" << endl;
-
-    return 0;
-}
+int x;
+string str;
+std::cin >> x >> str; //reads exactly one int then one string from console
 ```  
+
+##### `std::cin` in details:
+* First call to `std::cin >>` creates a command line prompt that allows the user to type until they hit enter(\n)  
+* Each `>>` ONLY reads until the next **whitespace**
+	* Whitespace = tab, space, newline
+* Everything after the first whitespace **gets saved** and **will be used at the next time std::cin >> is called.**
+	* The place it is saved is called a **buffer**
+* If there is nothing waiting in the buffer, `std::cin >>` creates a new command line prompt  
+	* Which means if the buffer is not empty, `std::cin >>` will just use the buffer rather than require the user for a new input.
+* Whitespace is eaten; it won’t show up in output(used as delimiter and then skipped)  
+
+more details in the code demo lec04_cin_details.cpp.  
+```
+Iteration: 1
+1 3 // first prompt, given 2 input
+X: 1
+Iteration: 2
+X: 3 // here since there is '3' in the buffer `std::cin` wont give prompt
+Iteration: 3
+1 3 4 5 7 // empty buffer, new prompt
+X: 1
+Iteration: 4
+X: 3
+Iteration: 5
+X: 4 // buffer is always not empty, using buffer rather than give prompt
+```  
+
+

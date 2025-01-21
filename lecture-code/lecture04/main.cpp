@@ -6,11 +6,11 @@ int main() {
 	std::ofstream ofs("hello.txt");
 	if (ofs.is_open()) {
 		ofs << "Hello CS106L!" << '\n';
-    }
-    ofs.close();
-    ofs << "this will not get written";
+  }
+  ofs.close();
+  ofs << "this will not get written";
 
-    ofs.open("hello.txt");
-    ofs << "this will though! It's open again";
-        return 0;
+  ofs.open("hello.txt");
+  ofs << "this will though! It's open again";
+  return 0;
 }
