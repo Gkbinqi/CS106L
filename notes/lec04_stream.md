@@ -21,7 +21,7 @@ std::cout << s.name << s.age << std::endl; // this works
 // Any primitive type + most from the STL work!
 // For other types, you will have to write the << operator yourself!
 // We’ll talk about how to write the << operator for custom types during lecture 11 on Operators!
-```  
+```
 
 ### Streams Overview
 > `std::cout` means 'console output' while 'c' means character.
@@ -59,7 +59,7 @@ What's more, operator `>>` and `<<`
 std::cout << 5 << std::endl; 
 // converts int value 5 to string “5”
 // and sends “5” to the console output stream
-```  
+```
 
 ##### Output File Streams have type `std::ofstream`  
 * We can only *send* data to file using the `<<` operator  
@@ -68,7 +68,7 @@ std::cout << 5 << std::endl;
 ```
 std::ofstream out(“out.txt”); // variable out is now an ofstream that outputs to out.txt
 out << 5 << std::endl; // out.txt contains 5\n
-```   
+```
 
 More about ofstream is in the code lec04_ofstream.  
 
@@ -89,14 +89,14 @@ More about ofstream is in the code lec04_ofstream.
 int x;
 string str;
 std::cin >> x >> str; //reads exactly one int then one string from console
-```  
+```
 
 ##### `std::cin` in details:
-* First call to `std::cin >>` creates a command line prompt that allows the user to type until they hit enter(\n)  
+* First call to `std::cin >>` creates a command line prompt(should use `std::cout` to show the prompt words, or there will only be a slash line shining) that allows the user to type until they hit enter(\n)  
 * Each `>>` ONLY reads until the next **whitespace**
 	* Whitespace = tab, space, newline
 * Everything after the first whitespace **gets saved** and **will be used at the next time std::cin >> is called.**
-	* The place it is saved is called a **buffer**
+	* The place that the rest line is saved is called a **buffer**
 * If there is nothing waiting in the buffer, `std::cin >>` creates a new command line prompt  
 	* Which means if the buffer is not empty, `std::cin >>` will just use the buffer rather than require the user for a new input.
 * Whitespace is eaten; it won’t show up in output(used as delimiter and then skipped)  
@@ -115,6 +115,124 @@ Iteration: 4
 X: 3
 Iteration: 5
 X: 4 // buffer is always not empty, using buffer rather than give prompt
-```  
+```
 
+##### `std::istream` Details:  As a Sequence of Characters
+
+**More details in slides.**
+
+##### e.g. 1. White Space
+
+``````
+int x; string y; int z;
+// cin input: "42 ab 4\n"
+cin >> x; 
+cin >> y;
+cin >> z;
+``````
+
+use □ to indicate that whitespace here
+
+1. `cin >> x`: 
+
+input "42□ab□4\n", pointer reads 42 in and meet the whitespace, reading stop, skip the whitespace.
+
+Character exist, stored in buffer.
+
+2. `cin >> y`
+
+Since buffer is not empty, `cin >> y` will use the buffer instead of give a prompt.
+
+pointer reads in ab and meet the whitespace, reading stop, skip □.
+
+buffer is still not empty.
+
+3. `cin >> z`
+
+pointer reads in 4 and meed the \n.
+
+##### e.g. 2. Reading Fail 
+
+```
+ string str;
+ int x;
+ std::cin >> str >> x;
+ //what happens if input is blah blah?
+ std::cout << str << x;
+```
+
+1. `std::cin **>> str** >> x` input into `str`
+
+input: "blah□blah\n", reads the first "blah" in and meet the white space. stop, skip □.
+
+`str` is "blah"
+
+2. `std::cin >> str **>> x**` input into `x`
+
+Now the pointer will read a stream like "blah\n", but `x` is a int variable so the read process will fail.
+
+The program won't crash, but `x` will be set to 0 to indicate a fail has occured. 
+
+##### e.g. 3. Fail Bits
+
+```
+// https://www.onlinegdb.com/X5RqXJKh1
+#include <iostream>
+using namespace std;
+int main()
+{
+    string str;
+    int x; 
+    string otherStr;
+    // Input: blah blah blah 
+    cin >> str >> x >> otherStr;
+    
+    cout << "This is str: " << str << endl;
+    cout << "This is x: " << x << endl; 
+    cout << "This is otherStr: " << otherStr << endl; 
+
+    return 0;
+}
+```
+
+Here is the output:
+
+```
+blah blah blah
+This is str: blah
+This is x: 0
+This is otherStr: 
+```
+
+Once an error is detected, the input stream’s **fail bit** is set, and it will no longer accept input
+
+##### e.g. 4. No Whitespace
+
+```
+int age; double hourlyWage; 
+cout << "Please enter your age: ";
+cin >> age;  
+cout << "Please enter your hourly wage: "; 
+cin >> hourlyWage;
+//what happens if first input is 2.17?
+```
+
+first, 2 is read into `age` when pointer meets '.', and then ".17" is read into`hourlyWage` since '.' won't be skip and pointer starts at '.'
+
+
+
+### `std::getline()`
+
+> Used to read a line from an input stream
+
+Function Signature Here 
+
+`istream& getline(istream& is, string& str, char delim);`
+
+* `istream& is`: the `istream` where `getline` reads from, e.g. `std::cin`
+
+* `string& str`: `&` stores output in
+
+* `char delim`: delimiter, where to stop when reading, '\n' =  default.
+* Designed to work with character sequences
 
