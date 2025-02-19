@@ -233,6 +233,6 @@ Function Signature Here
 
 * `string& str`: `&` stores output in
 
-* `char delim`: delimiter, where to stop when reading, '\n' =  default.
+* `char delim`: delimiter, where to stop when reading, set as '\n' by default.
 * Designed to work with character sequences
 

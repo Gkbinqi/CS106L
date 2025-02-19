@@ -1,0 +1,3 @@
+https://cs106l.github.io/textbook/
+https://web.stanford.edu/class/cs106l/
+
