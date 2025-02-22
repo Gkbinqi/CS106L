@@ -1,5 +1,6 @@
 //https://www.onlinegdb.com/aurtLIYMk
 #include <iostream>
+#include <vector>
 
 using namespace std;
 

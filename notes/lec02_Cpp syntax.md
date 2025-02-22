@@ -12,32 +12,32 @@
 ### STL
 > STL = Standard Template Library  
 
-Which contains TONS of functionality (algorithms, 
-containers, functions, iterators) some of which we 
-will explore in this class  
-The namespace for the STL is std -- std is the abbreviation for standard  
+Which contains TONS of functionality (algorithms, containers, functions, iterators) some of which we will explore in this class  
+The namespace for the STL is **std** -- **std** is the abbreviation for *standard*  
 To access elements from the STL use **std::**
 
 ### Types
 C++ Fundamental Types(primitive types)  
-```int val = 5; //32 bits```  
-```char ch = 'F'; //8 bits (usually) ```  
-```float decimalVal1 = 5.0;  //32 bits (usually)```  
-```double decimalVal2 = 5.0;  //64 bits (usually)```  
-```bool bVal = true;  //1 bit```  
-extended: string  
-```#include <string>```
-```std::string str = "Sarah";```
+
+```
+int val = 5; //32 bits
+char ch = 'F'; //8 bits (usually)
+float decimalVal1 = 5.0;  //32 bits (usually)
+double decimalVal2 = 5.0;  //64 bits (usually)
+bool bVal = true;  //1 bit
+//extended: string  
+#include <string>
+std::string str = "Sarah";
+```
 
 ### C++ is a *statically* typed language  
-***statically*** typed: everything with a name (variables, functions, etc) is given a type before runtime.  
-***dynamically*** typed: everything with a name (variables, functions, etc) is given a type at runtime 
-based on the thing’s current value. e.g. python
+* ***statically*** typed: everything with a name (variables, functions, etc) is given a type before runtime.  
+* ***dynamically*** typed: everything with a name (variables, functions, etc) is given a type at runtime based on the thing’s current value. e.g. python
 
 ### Compiled vs Interpreted language
 **Main Difference: When is source code translated?**   
 **Source Code**: Original code, usually typed by a human into a computer in a human-friendly form(like C++ or Python)  
-**Translated**: Converting source code into something a computer can understand (i.e. machine code), just like compiling.  
+**Translated**: Converting source code into something that computer can understand (i.e. machine code), just like compiling.  
 **Runtime**: Period when program is executing commands (after compilation, if compiled)
 
 * Dynamically typed, interpreted:  
@@ -63,7 +63,7 @@ void -> string
 ### Function Overloading
 > Define two functions with the same name but have different types.  
 
-Core: same name but different function signature.  
+Core: same name but different **function signature**.  
 
 ```
 int half(int x) {  
@@ -77,6 +77,8 @@ double half(double x) {
 half(3) // uses version (1), returns 1 
 half(3.0) // uses version (2), returns 1.5
 ```
+
+Another example:
 
 ```
 int half(int x, int divisor = 2) {
@@ -92,7 +94,7 @@ half(3.0) // uses version (2), returns 1.5
 
 ### Struct
 > A group of named variables each with their own type. A way to bundle different types together
-  
+
 ```
 struct Student {
 	string name; // these are called fields
@@ -103,8 +105,7 @@ Student s;
 s.name = "Sarah"; 
 s.state = "CA";
 s.age = 21; // use . to access fields
-//is the same as ...
-Student s2= {"Sarah", "CA", 21};
+//is the same as ```Student s2= {"Sarah", "CA", 21};```
 
 void printStudentInfo(Student s) {
 	cout << s.name << " from " << s.state;
@@ -135,10 +136,11 @@ std::cout << foundStudent.name << std::endl; // Sarah
 
 ```
 std::pair<int, string> numSuffix = {1,"st"};
-std::cout << numSuffix.first << numSuffix.second << std::endl; //prints 1st
-```  
+std::cout << numSuffix.first << numSuffix.second << std::endl; //print 1st
+```
 Use `std::pair` to return success + result  
-To avoid specifying the types of a pair, use `std::make_pair(field1, field2)`  
+To avoid specifying the types of a pair, use `std::make_pair(field1, field2)` 
+
 ```
 std::pair<bool, Student> lookupStudent(string name) {
 	Student blank;
@@ -147,11 +149,11 @@ std::pair<bool, Student> lookupStudent(string name) {
 	return std::make_pair(true, result);
 }
 std::pair<bool, Student> output = lookupStudent(“Julie”);
-```  
+```
 
 ### Type Deduction with `auto`
-> Keyword used in lieu of type when declaring a variable, tells the compiler to deduce the type.  
-> **`auto` does not mean that the variable doesn’t have a type. It means that the type is deduced by the compiler.**    
+> Keyword used in lieu(替代) of type when declaring a variable, tells the compiler to deduce the type automatically.  
+> **`auto` doesn't mean that the variable don’t have a type. It means that the type is deduced by the compiler.**    
 
 ```
 // What types are these?
@@ -160,5 +162,5 @@ auto b = 4.3; // double
 auto c = ‘X’; // char
 auto d = “Hello”; // char* (a C string)
 auto e = std::make_pair(3, “Hello”); // std::pair<int, char*>
-```  
+```
 
