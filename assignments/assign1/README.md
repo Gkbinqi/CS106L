@@ -1,6 +1,6 @@
 # Assignment 1: SimpleEnroll
 
-Due Friday, October 11th at 11:59PM
+Due Monday, January 27th, at 11:59PM
 
 ## Overview
 
@@ -18,8 +18,6 @@ There are only two files you should need to care about:
 
 * `main.cpp`: All your code goes here 😀!
 * `utils.cpp`: Contains some utility functions. You'll use functions defined in this file, but you don't otherwise need to modify it.
-
-To download the starter code for this assignment, please see the instructions for [**Getting Started**](../README.md#getting-started) on the course assignments repository.
 
 ## Running your code
 
@@ -111,4 +109,8 @@ After compiling and running, if your autograder looks like this:
 
 ![An image showing a terminal window where the autograder has run with all tests passing](docs/autograder.png)
 
-then you have finished the assignment! Woot woot. To submit the assignment, please complete the feedback form [at this link](https://forms.gle/UfSDVYpbg472ZXkJ8). Once you submit the form, a link to the submission page will show up in the form submission confirmation.
+then you have finished the assignment! Woot woot. To submit the assignment, please complete the feedback form [at this link](https://forms.gle/SW3AgM6dKa5Ea2ow6). Once you submit the form, a link to the submission page will show up in the form submission confirmation.
+
+Your deliverable should be:
+
+- `main.cpp`
