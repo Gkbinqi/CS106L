@@ -25,9 +25,9 @@ const std::string COURSES_NOT_OFFERED_PATH = "student_output/courses_not_offered
  * Hint: Remember what types C++ streams work with?!
  */
 struct Course {
-  /* STUDENT TODO */ title;
-  /* STUDENT TODO */ number_of_units;
-  /* STUDENT TODO */ quarter;
+  std::string title;
+  std::string number_of_units;
+  std::string quarter;
 };
 
 /**
@@ -58,8 +58,27 @@ struct Course {
  * @param filename The name of the file to parse.
  * @param courses  A vector of courses to populate.
  */
-void parse_csv(std::string filename, std::vector<Course> courses) {
+void parse_csv(const std::string& filename, std::vector<Course>& courses) {
+  // 需要注意的是, 这里第二个参数原本为std::vector<Course> courses, 没有&, 会导致出错
   /* (STUDENT TODO) Your code goes here... */
+  std::ifstream ifs(filename);
+  if (!ifs.is_open()) {
+    std::cout << "file not exist" << std::endl;
+    exit(1);
+  }
+
+  std::string s;
+  getline(ifs, s);
+  while(getline(ifs, s)) {
+    auto s_list = split(s, ',');
+    Course c;
+    c.title = s_list[0];
+    c.number_of_units = s_list[1];
+    c.quarter = s_list[2];
+
+    courses.emplace_back(c);
+  }
+  ifs.close();
 }
 
 /**
@@ -80,8 +99,31 @@ void parse_csv(std::string filename, std::vector<Course> courses) {
  * @param all_courses A vector of all courses gotten by calling `parse_csv`.
  *                    This vector will be modified by removing all offered courses.
  */
-void write_courses_offered(std::vector<Course> all_courses) {
+void write_courses_offered(std::vector<Course>& all_courses) {
   /* (STUDENT TODO) Your code goes here... */
+  std::ofstream ofs(COURSES_OFFERED_PATH);
+  if (!ofs.is_open()) {
+    std::cout << "can't open file" << std::endl;
+    exit(1);
+  }
+  Course header {"Title", "Number of Units", "Quarter"};
+  ofs << header << '\n';// 这里恒改了utils里面的 << 重载, 将空格删除, 故可以直接用<<输入
+
+  std::vector<Course> offered;
+
+  for (auto& course : all_courses) {
+    if (course.quarter != "null") {
+      // not null, offered
+      ofs << course << '\n';
+      offered.push_back(course);
+    }
+  }
+
+  // 用完再删除
+  for (const auto& c : offered) {
+    delete_elem_from_vector(all_courses, c);
+  }
+  ofs.close();
 }
 
 /**
@@ -99,17 +141,32 @@ void write_courses_offered(std::vector<Course> all_courses) {
  */
 void write_courses_not_offered(std::vector<Course> unlisted_courses) {
   /* (STUDENT TODO) Your code goes here... */
+  std::ofstream ofs(COURSES_NOT_OFFERED_PATH);
+  if (!ofs.is_open()) {
+    std::cout << "can't open file" << std::endl;
+    exit(1);
+  }
+  Course header {"Title", "Number of Units", "Quarter"};
+  ofs << header << '\n';// 这里恒改了utils里面的 << 重载, 将空格删除, 故可以直接用<<输入
+
+
+  for (const auto& course : unlisted_courses) {
+    ofs << course << "\n";
+  }
+
+  ofs.close();
 }
 
 int main() {
   /* Makes sure you defined your Course struct correctly! */
   static_assert(is_valid_course<Course>, "Course struct is not correctly defined!");
+  // 三个filed都需要为std::string, 否则无法通过测试
 
   std::vector<Course> courses;
   parse_csv("courses.csv", courses);
 
   /* Uncomment for debugging... */
-  // print_courses(courses);
+  //print_courses(courses);
 
   write_courses_offered(courses);
   write_courses_not_offered(courses);

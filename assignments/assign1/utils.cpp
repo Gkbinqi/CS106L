@@ -47,6 +47,7 @@ void delete_elem_from_vector(std::vector<Course>& v, const Course& elem) {
  * @param vector_of_courses The vector of courses to print.
  */
 void print_courses(const std::vector<Course>& vector_of_courses) {
+  std::cout << "running print_courses" << "\n";
   for (const Course& course : vector_of_courses) {
     std::cout << course << std::endl;
   }
@@ -63,7 +64,7 @@ bool operator==(const Course& lhs, const Course& rhs) {
 }
 
 std::ostream& operator<<(std::ostream& os, const Course& course) {
-  os << course.title << ", " << course.number_of_units << ", " << course.quarter;
+  os << course.title << "," << course.number_of_units << "," << course.quarter;
   return os;
 }
 
