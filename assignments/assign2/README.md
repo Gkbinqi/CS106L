@@ -4,7 +4,7 @@
 
 # Assignment 2: Marriage Pact
 
-Due Friday, October 18th at 11:59PM
+Due Friday, January 31st at 11:59PM
 
 ## Overview
 
@@ -14,7 +14,6 @@ These are the files you need to care about:
 
 - `main.cpp`: All your code goes here 😀!
 - `short_answer.txt`: Short answer responses go here 📝!
-- `utils.h`: You must change the functions in this file if you choose to use an `std::unordered_set`
 
 To download the starter code for this assignment, please see the instructions for [**Getting Started**](../README.md#getting-started) on the course assignments repository.
 
@@ -23,7 +22,7 @@ To download the starter code for this assignment, please see the instructions fo
 To run your code, first you'll need to compile it. Open up a terminal (if you are using VSCode, hit <kbd>Ctrl+\`</kbd> or go to **Terminal > New Terminal** at the top). Then make sure that you are in the `assign2/` directory and run:
 
 ```sh
-g++ -std=c++20 main.cpp utils.cpp -o main
+g++ -std=c++20 main.cpp -o main
 ```
 
 Assuming that your code compiles without any compiler errors, you can now do:
@@ -43,7 +42,7 @@ As you are following the instructions below, we recommend intermittently compili
 > On Windows, you may need to compile your code using
 >
 > ```sh
-> g++ -static-libstdc++ -std=c++20 main.cpp utils.cpp -o main
+> g++ -static-libstdc++ -std=c++20 main.cpp -o main
 > ```
 >
 > in order to see output. Also, the output executable may be called `main.exe`, in which case you'll run your code with:
@@ -65,12 +64,15 @@ We’ve included a `.txt` file of all of the (fictional) students who signed up 
 > [!IMPORTANT]
 >
 > ### `get_applicants`
-> From the `.txt` file, parse all of the names into a set. Each line contained in the file named `filename` is a single applicant's name. In your implementation, you are free to choose between an ordered (`std::set`) and unordered set (`std::unordered_set`) as you wish! If you do choose to use an unordered set, make sure to also change the relevant function definitions in `utils.h`!
+>
+> From the `.txt` file, parse all of the names into a set. Each line contained in the file named `filename` is a single applicant's name. In your implementation, you are free to choose between an ordered (`std::set`) and unordered set (`std::unordered_set`) as you wish! If you do choose to use an unordered set, please change the relevant function definitions!
 
 Additionally, please answer the following short answer question in `short_answer.txt`:
 
 > [!IMPORTANT]
+>
 > ### `short_answer.txt`
+>
 > **Q1:** It is your choice to use either an ordered or unordered set. In a few sentences, what are some of the tradeoffs between the two? Additionally, please give an example (that has not been shown in lecture) of a valid hash function that could be used to hash student names for an unordered set.
 
 > [!NOTE]
@@ -83,26 +85,31 @@ Great detective work! Now that you’ve narrowed down your list of potential sou
 For this section, you will write the functions `find_matches` and `get_match`:
 
 > [!IMPORTANT]
+>
 > ### `find_matches`
+>
 > From the set `students` (generated in the previous part), take all names that share initials with the parameter `name` and place pointers to them in a new `std::queue`.
+>
 > - If you’re having trouble figuring out how to iterate through a set, it could be helpful to look back over [Thursday’s lecture on iterators and pointers](https://office365stanford-my.sharepoint.com/:p:/g/personal/jtrb_stanford_edu/EbOKUV784rBHrO3JIhUSAUgBvuIGn5rSU8h3xbq-Q1JFfQ?e=BlZwa7).
 > - You will need to be familiar with the operations of a `std::queue` for this part. Take a look at cppreference's documentation [here](https://en.cppreference.com/w/cpp/container/queue).
 > - Hint: It might help to define a helper function that computes the initials of some student's name. Then you can use that helper function to compare the initials of `name` with the initials of each name in `students`.
 
-
 From here please implement the function `get_match` to find your “one true match.”:
 
 > [!IMPORTANT]
+>
 > ### `get_match`
+>
 > Gets your “one true match” from the queue of all possible matches. This can be determined as you see fit; choose some method of acquiring one student from the queue, ideally something with a bit more thought than a single `pop()`, but it doesn’t have to be particularly complicated! Consider random values or other methods of selection.
-> 
-> If your initials have no matches in the dataset, print `“NO STUDENT FOUND.”` Better luck next year 😢
- 
+>
+> If your initials have no matches in the dataset, print `“NO MATCHES FOUND.”` Better luck next year 😢
 
 Afterwards, answer the following question in `short_answer.txt`:
 
 > [!IMPORTANT]
+>
 > ### `short_answer.txt`
+>
 > **Q2:** Note that we are saving pointers to names in the queue, not names themselves. Why might this be desired in this problem? What happens if the original set where the names are stored goes out of scope and the pointers are referenced?
 
 ## 🚀 Submission Instructions
@@ -112,7 +119,6 @@ Before you submit the assignment, please fill out this [short feedback form](htt
 Your deliverable should be:
 
 - `main.cpp`
-- `utils.h`
 - `short_answer.txt`
 
 You may resubmit as many times as you'd like before the deadline.

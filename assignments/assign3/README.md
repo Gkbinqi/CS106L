@@ -4,7 +4,7 @@
 
 # Assignment 3: Make a Class
 
-Due Friday, October 25th at 11:59PM
+Due Friday, February 7th at 11:59PM
 
 ## Overview
 
@@ -20,14 +20,14 @@ There are four files you'll work with for this assignment:
 
 * `class.h` - This is the header file for your class, where the class **declaration** will go.
 * `class.cpp` - This is the `.cpp` file for your class, where the class **definition** will go.
-* `main.cpp` - You'll construct an instance of your class here.
+* `sandbox.cpp` - You'll construct an instance of your class here.
 * `short_answer.txt` - You'll answer a few short answer questions here.
 
 To download the starter code for this assignment, please see the instructions for [**Getting Started**](../README.md#getting-started) on the course assignments repository.
 
 ## Running your code
 
-To run your code, first you'll need to compile it. Open up a terminal (if you are using VSCode, hit <kbd>Ctrl+\`</kbd> or go to **Terminal > New Terminal** at the top). Then make sure that you are in the `assign2/` directory and run:
+To run your code, first you'll need to compile it. Open up a terminal (if you are using VSCode, hit <kbd>Ctrl+\`</kbd> or go to **Terminal > New Terminal** at the top). Then make sure that you are in the `assign3/` directory and run:
 
 ```sh
 g++ -std=c++20 main.cpp class.cpp -o main
@@ -94,7 +94,7 @@ Note that this is the bare minimum to get credit for the assignment. Please feel
 > Remember to also swap the includes so that the `.h` file includes the `.cpp`
 > file at the end of the file, as discussed in Thursday's lecture.
 
-Now that you've created your class, let's actually use it. **Inside of the `main` function in `main.cpp`, construct an instance of your class!** You can do so however you like (call default constructor, use uniform initialization, etc.).
+Now that you've created your class, let's actually use it. **Inside of the `sandbox` function in `sandbox.cpp`, construct an instance of your class!** You can do so however you like (call default constructor, use uniform initialization, etc.).
 
 To see if you did everything correctly, compile and run your code! The autograder will give you feedback on your class and check if it meets the specifications above.
 
@@ -109,13 +109,13 @@ Please answer the following questions inside `short_answer.txt`. We expect about
 
 ## 🚀 Submission Instructions
 
-Before you submit the assignment, please fill out this [short feedback form](https://forms.gle/HrEMrkbb7pUWjur78). **Completion of the form is required to receive credit for the assignment.** After filling out the form, please upload the files to Paperless under the correct assignment heading.
+Before you submit the assignment, please fill out this [short feedback form](https://forms.gle/GpYLMocRHsgCfL6k8). **Completion of the form is required to receive credit for the assignment.** After filling out the form, please upload the files to Paperless under the correct assignment heading.
 
 Your deliverable should be:
 
 * `class.h`
 * `class.cpp`
-* `main.cpp`
+* `sandbox.cpp`
 * `short_answer.txt`
 
 You may resubmit as many times as you'd like before the deadline.

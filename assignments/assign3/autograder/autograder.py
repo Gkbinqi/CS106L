@@ -1,19 +1,12 @@
 from typing import Callable, List, Set, Tuple, TypeVar
-from utils import Autograder
+from utils import Autograder, get_declarations, install_castxml
+install_castxml()
 
 import os
-import subprocess
 import re
 
-from pygccxml import utils as gccutils
 from pygccxml import declarations
-from pygccxml import parser
-
-import logging
 from colorama import Fore, Style, Back
-
-# This should prevent pygccxml from outputting INFO messages
-gccutils.loggers.set_level(logging.WARNING)
 
 PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 AUTOGRADER_DIR = os.path.join(PATH, "autograder")
@@ -24,69 +17,6 @@ definitions: Set[Tuple[str, str]] = None
 
 def norm_path(path: os.PathLike) -> os.PathLike:
     return os.path.normpath(os.path.relpath(path, os.getcwd()))
-
-
-def install_castxml():
-    bin_path = os.environ.get("VIRTUAL_ENV_BIN")
-    castxml_dir = os.path.join(bin_path, "castxml")
-
-    castxml_bin_dir = os.path.join(castxml_dir, "bin")
-    os.environ["PATH"] = os.pathsep.join(
-        [castxml_bin_dir, *os.environ.get("PATH", "").split(os.pathsep)]
-    )
-
-    if os.path.isdir(castxml_dir):
-        return
-
-    print("⏳ Installing CastXML...")
-
-    def get_platform_file():
-        import platform
-        import cpuinfo
-
-        os_name = platform.system().lower()
-        arch = platform.machine().lower()
-
-        if os_name == "linux" and arch == "aarch64":
-            return "linux-aarch64.tar.gz"
-        elif os_name == "linux":
-            return "linux.tar.gz"
-        elif os_name == "darwin":
-            # Need to handle running Python under Rosetta on Apple Silicon
-            brand = cpuinfo.get_cpu_info()["brand_raw"]
-            if "arm" in arch or re.match(r"Apple M\d+", brand):
-                return "macos-arm.tar.gz"
-            return "macosx.tar.gz"
-        elif os_name == "windows":
-            return "windows.zip"
-
-        raise RuntimeError(
-            f"It looks like you are running on an unknown platform: {os_name}/{arch}. Please make a post on EdStem!"
-        )
-
-    castxml_file = get_platform_file()
-    castxml_download_url = f"https://github.com/CastXML/CastXMLSuperbuild/releases/download/v0.6.5/castxml-{castxml_file}"
-
-    import requests
-    import zipfile
-    import tarfile
-
-    castxml_archive_path = os.path.join(bin_path, castxml_file)
-
-    with requests.get(castxml_download_url, stream=True) as r:
-        r.raise_for_status()
-        with open(castxml_archive_path, "wb") as f:
-            for chunk in r.iter_content(chunk_size=8192):
-                f.write(chunk)
-
-    if castxml_file.endswith(".zip"):
-        with zipfile.ZipFile(castxml_archive_path, "r") as zip_ref:
-            zip_ref.extractall(bin_path)
-    elif castxml_file.endswith(".tar.gz"):
-        with tarfile.open(castxml_archive_path, "r:gz") as tar_ref:
-            tar_ref.extractall(bin_path)
-
-    print("✅ Installed CastXML!")
 
 
 def get_definitions(source_file: os.PathLike) -> Set[Tuple[str, str]]:
@@ -158,67 +88,33 @@ def find_decl(decl: declarations.declaration_t):
 T = TypeVar("T")
 
 
-def get_decls(getter: Callable[[], T], kind_plural: str) -> T:
+def get_decls(getter: Callable[[], T], kind_plural: str, scope: str = "class") -> T:
     try:
         return getter()
     except RuntimeError as err:
         if "query returned 0 declarations" in str(err):
-            raise RuntimeError(f"Could not find any {kind_plural} in class")
+            raise RuntimeError(f"Could not find any {kind_plural} in {scope}")
 
 
 def setup():
-    main_cpp_path = os.path.join(PATH, "main.cpp")
+    sandbox_cpp_path = os.path.join(PATH, "sandbox.cpp")
     class_h_path = os.path.join(PATH, "class.h")
     class_cpp_path = os.path.join(PATH, "class.cpp")
 
-    if not os.path.isfile(main_cpp_path):
+    if not os.path.isfile(sandbox_cpp_path):
         raise RuntimeError(
             "Couldn't find '{main.cpp}'. Did you delete it from the starter code?"
         )
-
-    # Grab the C++ parser
-    generator_path, generator_name = gccutils.find_xml_generator()
-
-    compiler_path = None
-    if os.name == "nt":
-        result = result = subprocess.run(
-            ["where", "g++"], capture_output=True, text=True
-        )
-        if result.returncode != 0:
-            raise RuntimeError(
-                "Couldn't find the path to g++. Did you follow the setup instructions?\n\nhttps://github.com/cs106l/cs106l-assignments"
-            )
-        compiler_path = result.stdout.strip()
-        compiler_path = f'"(" "{compiler_path}" -std=c++11 ")"'
-
-    # Configure the C++ parser
-    xml_generator_config = parser.xml_generator_configuration_t(
-        xml_generator_path=generator_path,
-        xml_generator=generator_name,
-        compiler="g++",
-        compiler_path=compiler_path,
-        working_directory=PATH,
-        ccflags="-std=c++11",
-    )
-
-    try:
-        decls = parser.parse([norm_path(main_cpp_path)], xml_generator_config)
-        global_namespace = declarations.get_global_namespace(decls)
-        classes = global_namespace.classes()
-    except Exception as e:
-        print()
-        print(e)
-        print()
-        print(
-            f"{Fore.RED}{Back.YELLOW}Failed to parse main.cpp. Did you remember to recompile your code?{Style.RESET_ALL}"
-        )
-        print(
-            f"{Fore.LIGHTWHITE_EX}If your code is compiling correctly, please reach out on Ed with the error message above.{Fore.RESET}\n"
-        )
-        raise Exception("Failed to parse C++ file")
+    
+    decls = get_declarations(norm_path(sandbox_cpp_path))
+    global_namespace = declarations.get_global_namespace(decls)
 
     # Try to find a class inside of class.h
     def find_class_decl() -> declarations.class_t:
+        try:
+            classes = global_namespace.classes()
+        except:
+            classes = []
         cls_decl: declarations.class_t
         for cls_decl in classes:
             location: declarations.location_t = cls_decl.location
@@ -423,8 +319,6 @@ def test_setter_function():
 
 
 if __name__ == "__main__":
-    install_castxml()
-
     grader = Autograder()
     grader.setup = setup
     grader.add_part(

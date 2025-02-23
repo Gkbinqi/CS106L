@@ -1,81 +1,43 @@
 from utils import Autograder
 
-from typing import Dict, Iterable, List, Tuple, Union
+from typing import Dict, Iterable, Union
 
+from colorama import Fore, Style
+import difflib
 import os
 import re
+import subprocess
+import shutil
+import sys
 
 PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 AUTOGRADER_DIR = os.path.join(PATH, "autograder")
-MAIN_CPP_PATH = os.path.join(PATH, "main.cpp")
+CODE_PATH = os.path.join(PATH, "spellcheck.cpp")
+EXAMPLES_PATH = os.path.join(PATH, "examples")
+EXAMPLES_GOLD_PATH = os.path.join(AUTOGRADER_DIR, "gold")
 
-kRangeThreshold = 5
-kAvgTempThreshold = 60
+# =============================================================================
+# Verifying source code
+# =============================================================================
+
 
 FUNCTION_MATCHERS: Dict[str, Iterable[Union[str, Iterable[str]]]] = {
-    "compute_forecast": ["std::min_element", "std::max_element", "std::accumulate"],
-    "get_forecasts": ["compute_forecast", "std::transform"],
-    "get_filtered_data": ["std::remove_if"],
-    "get_shuffled_data": ["std::shuffle"],
-    "run_weather_pipeline": ["get_filtered_data", "get_forecasts", "get_shuffled_data"],
+    "tokenize": [
+        "find_all",
+        "std::transform",
+        "std::inserter",
+        "std::erase_if",
+        "#noloops",
+    ],
+    "spellcheck": [
+        ["std::ranges::views::filter", "rv::filter"],
+        ["std::ranges::views::transform", "rv::transform"],
+        "!std::copy_if",
+        "!std::transform",
+        "levenshtein",
+        "#noloops",
+    ],
 }
-
-
-def fix_datum(datum: Tuple[float, float, float]) -> str:
-    return f"min = {datum[0]:.4f} average = {datum[1]:.4f} max = {datum[2]:.4f}"
-
-
-def get_gold(file: os.PathLike) -> List[str]:
-    records = []
-    with open(file, "r") as f:
-        for line in f:
-            data = [float(x) for x in line.strip().split()]
-            m = min(data)
-            M = max(data)
-            a = sum(data) / len(data)
-            if M - m < kRangeThreshold:
-                continue
-            if a < kAvgTempThreshold:
-                continue
-            records.append(fix_datum((m, M, a)))
-    return records
-
-
-def get_student(file: os.PathLike) -> List[str]:
-    data = []
-    with open(file, "r") as f:
-        for line in f:
-            data.append(fix_datum(tuple(float(x) for x in line.strip().split())))
-    return data
-
-
-def test_valid_shuffle():
-    STUDENT_FILE = os.path.join(AUTOGRADER_DIR, "student.txt")
-    SOURCE_FILE = os.path.join(AUTOGRADER_DIR, "data.txt")
-
-    student_raw = get_student(STUDENT_FILE)
-    gold_raw = get_gold(SOURCE_FILE)
-
-    student = sorted(student_raw)
-    gold = sorted(gold_raw)
-    
-    if student_raw == gold:
-        raise RuntimeError(
-            "Student output appears unshuffled. Are you sure you shuffled your forecasts?"
-        )
-
-    if student != gold:
-        extra = set(student) - set(gold)
-        missing = set(gold) - set(student)
-
-        if extra:
-            extra_str = "\n\t - ".join([""] + list(extra))
-            print(f" - Extra: {extra_str}\n")
-        if missing:
-            missing_str = "\n\t -".join([""] + list(missing))
-            print(f" - Missing: {missing_str}\n")
-
-        raise RuntimeError("Shuffled forecasts do not match.")
 
 
 def remove_comments_strings(content):
@@ -90,6 +52,29 @@ def remove_comments_strings(content):
     content = string_regex.sub("", content)
 
     return content
+
+
+def tokenize_source(input_code: str) -> Iterable[str]:
+    tokens = []
+
+    pattern_fqn = re.compile(r"^(::)?[a-zA-Z_][a-zA-Z0-9_]*(::[a-zA-Z_][a-zA-Z0-9_]*)*")
+    pattern_non_word = re.compile(r"^\W+")
+
+    while input_code:
+        fqn_match = pattern_fqn.match(input_code)
+        if fqn_match:
+            tokens.append(fqn_match.group().strip())
+            input_code = input_code[len(fqn_match.group()) :]
+        else:
+            non_word_match = pattern_non_word.match(input_code)
+            if non_word_match:
+                tokens.append(non_word_match.group().strip())
+                input_code = input_code[len(non_word_match.group()) :]
+            else:
+                tokens.append(input_code[0])
+                input_code = input_code[1:]
+
+    return [t for t in tokens if t]
 
 
 def parse_methods(file_path):
@@ -128,42 +113,73 @@ def parse_methods(file_path):
             end_idx += 1
 
         method_body = content[start_idx + 1 : end_idx - 1].strip()
-        methods[method_name] = method_body
+        methods[method_name] = tokenize_source(method_body)
         pos = end_idx
 
     return methods
 
 
-def add_matcher_tests(grader: Autograder):
-    student_methods = parse_methods(MAIN_CPP_PATH)
+def add_matcher_tests(grader: Autograder, file: str):
+    student_methods = parse_methods(file)
     for method, matchers in FUNCTION_MATCHERS.items():
 
         def generate_test_method(method_copy, matchers_copy):
             def test():
                 if method_copy not in student_methods:
                     raise RuntimeError(
-                        f"Could not find a definition for required method '{method_copy}' in main.cpp"
+                        f"Could not find a definition for required method '{method_copy}' in {file}"
                     )
+
+                method_body = student_methods[method_copy]
+
                 for matcher in matchers_copy:
+                    if matcher == "#noloops":
+                        for loop_type in ["for", "while", "goto"]:
+                            if loop_type in method_body:
+                                raise RuntimeError(
+                                    f"Method {method_copy} may not contain any explicit for/while loops! You must use the STL instead! Found loop: {loop_type}"
+                                )
+                        print(f"🔎 {method_copy} has no for/while loops!")
+                        continue
+
                     if isinstance(matcher, str):
                         matcher = [matcher]
 
                     for m in matcher:
-                        if m in student_methods[method_copy]:
+                        if m.startswith("!"):
+                            m = m[1:]
+                            if m in method_body:
+                                raise RuntimeError(f"Method '{method_copy}' is not allowed to call method: {m}")
+                        elif m in method_body:
                             print(f"🔎 {method_copy} called method {m}")
                             break
                     else:
-                        raise RuntimeError(
-                            f"Method '{method_copy}' must call one of the following methods: {matcher}."
-                        )
+                        if not any(m.startswith("!") for m in matcher):
+                            raise RuntimeError(
+                                f"Method '{method_copy}' must call one of the following methods: {matcher}."
+                            )
 
             return test
 
         grader.add_part(method, generate_test_method(method, matchers))
 
+    # Ensure no helper function were used
+    def test_no_helper_functions():
+        present = set(student_methods.keys())
+        expected = set(FUNCTION_MATCHERS.keys())
+        extra = present - expected
+        if extra:
+            raise RuntimeError(
+                f"You may not use any helper functions for this assignment. You must implement all your code in the following functions: {', '.join(expected)}. \n\nFound extra functions: {', '.join(extra)}"
+            )
 
-def setup():
-    with open(MAIN_CPP_PATH, "r") as file:
+    grader.add_part(
+        "Check submission has no helper functions", test_no_helper_functions
+    )
+
+
+def no_obvious_namespace_std():
+    with open(CODE_PATH, "r") as file:
         content = file.read()
     content = remove_comments_strings(content)
     content = content.replace("\n", " ")
@@ -174,9 +190,137 @@ def setup():
         )
 
 
+# =============================================================================
+# Verifying program correctness
+# =============================================================================
+
+
+import os
+import subprocess
+
+
+def find_executable(containing_dir):
+    # Search for the executable in the given directory
+    for filename in ("main", "main.exe"):
+        exe_path = os.path.join(containing_dir, filename)
+        if os.path.isfile(exe_path) and os.access(exe_path, os.X_OK):
+            return exe_path
+    raise FileNotFoundError(
+        f"No executable named 'main' or 'main.exe' found in '{containing_dir}'."
+    )
+
+
+def spellcheck(file_path):
+    exe_path = find_executable(PATH)
+    command = [exe_path, "--stdin", "--unstyled"]
+
+    with open(file_path, "r", encoding="utf-8") as file:
+        result = subprocess.run(
+            command,
+            stdin=file,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            encoding="utf-8"
+        )
+
+    return result.stdout
+
+
+def generate_gold_dir():
+    if os.path.exists(EXAMPLES_GOLD_PATH):
+        shutil.rmtree(EXAMPLES_GOLD_PATH)
+    os.makedirs(EXAMPLES_GOLD_PATH)
+
+    for example_file in os.listdir(EXAMPLES_PATH):
+        example_file_path = os.path.join(EXAMPLES_PATH, example_file)
+        if not os.path.isfile(example_file_path):
+            continue
+        try:
+            output = spellcheck(example_file_path)
+            gold_file_path = os.path.join(EXAMPLES_GOLD_PATH, example_file)
+            with open(gold_file_path, "w", encoding="utf-8") as gold_file:
+                gold_file.write(output)
+
+            print(f"Processed {example_file} -> {gold_file_path}")
+        except Exception as e:
+            print(f"Failed to process {example_file}: {e}")
+
+
+def assert_contents_equal(expected, actual, filename):
+    if expected != actual:
+        expected_lines = expected.split("\n")
+        actual_lines = actual.split("\n")
+
+        diff = list(
+            difflib.unified_diff(
+                expected_lines,
+                actual_lines,
+                fromfile="Expected in solution, missing in your output",
+                tofile="Present in your output, missing in solution",
+            )
+        )
+
+        diff = [f"\t{l}" for l in diff]
+        diff[0] = diff[0].rstrip()
+        diff_output = "\n".join(diff)
+
+        def matcher(fore):
+            return (
+                lambda match: f"{fore}{Style.BRIGHT}{match.group(0)}{Style.RESET_ALL}"
+            )
+
+        diff_output = re.sub(
+            r"^\s*-+", matcher(Fore.RED), diff_output, flags=re.MULTILINE
+        )
+        diff_output = re.sub(
+            r"^\s*\++", matcher(Fore.GREEN), diff_output, flags=re.MULTILINE
+        )
+
+        error_lines = [
+            f"Contents do not match solution:",
+            diff_output,
+            "",
+            f"\t{Fore.CYAN}To see the output of your submission on this file, run:",
+            "",
+            f'\t\t ./main --stdin < "examples/{filename}"',
+            "",
+            f'\tTo see the expected solution output, open "autograder/gold/{filename}"{Fore.RESET}',
+        ]
+
+        raise RuntimeError("\n".join(error_lines))
+
+
+def test_spellcheck():
+    for example_file in os.listdir(EXAMPLES_GOLD_PATH):
+        gold_path = os.path.join(EXAMPLES_GOLD_PATH, example_file)
+        input_path = os.path.join(EXAMPLES_PATH, example_file)
+
+        if not os.path.isfile(input_path):
+            raise RuntimeError(
+                f"Could not find gold file for example '{example_file}'. Did you modify the examples/ directory?"
+            )
+
+        with open(gold_path, "r", encoding="utf-8") as f:
+            gold_output = f.read()
+
+        spellcheck_result = spellcheck(input_path)
+
+        assert_contents_equal(gold_output, spellcheck_result, example_file)
+        print(f"🔎 {example_file} spellcheck matched solution!")
+
+
+# =============================================================================
+# Autograder setup
+# =============================================================================
+
 if __name__ == "__main__":
+    if "--gold" in sys.argv:
+        generate_gold_dir()
+        sys.exit(0)
+
     grader = Autograder()
-    grader.setup = setup
-    grader.add_part("Valid Shuffle", test_valid_shuffle)
-    add_matcher_tests(grader)
+    grader.setup = no_obvious_namespace_std
+    add_matcher_tests(grader, CODE_PATH)
+    grader.add_part("Spellcheck", test_spellcheck)
     grader.run()
