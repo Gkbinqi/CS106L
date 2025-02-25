@@ -4,9 +4,9 @@
 
 STL: Standard TemplateLibrary
 
-* Containers
+* Containers(lec 05)
   How do we store groups of things?
-* Iterators
+* Iterators(lec 06)
   How do we traverse containers?
 * Functors
   How can we represent functions as objects?
@@ -20,6 +20,8 @@ STL: Standard TemplateLibrary
 ### `std::vector<T>`
 
 > `#include <vector>`
+>
+> a vector is a contiguous array, a single chunk of memory
 
 ![](C:\Users\47949\Desktop\CS106L\notes\pic\lec05_Vector.png)
 
@@ -67,7 +69,11 @@ vec[2] = 4; // undefined behavior
 vec.at(2) = 4; // Runtime error
 ```
 
+### `std::deque`
 
+可以`push_front` & `pop_front`
+
+实现: 申请数组的数组
 
 # Associative Containers
 

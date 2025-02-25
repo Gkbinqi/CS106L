@@ -111,11 +111,11 @@ void write_courses_offered(std::vector<Course>& all_courses) {
 
   std::vector<Course> offered;
 
-  for (auto& course : all_courses) {
+  for (const auto& course : all_courses) {
     if (course.quarter != "null") {
       // not null, offered
       ofs << course << '\n';
-      offered.push_back(course);
+      offered.push_back(course);// 注意这里是值传递 会将结构体复制进去 对all_course的修改不影响offered
     }
   }
 
