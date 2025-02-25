@@ -56,7 +56,6 @@ public:
   {
     /* STUDENT_TODO: Implement this method! You will need to change the return
      * type. */
-    throw std::runtime_error("find_course not implemented");
   }
 
 private:
@@ -76,16 +75,19 @@ main(int argc, char* argv[])
   if (argc == 2) {
     CourseDatabase db("autograder/courses.csv");
     auto course = db.find_course(argv[1]);
+    
+    /******************************************************** 
+    STUDENT_TODO: Populate the output string with the right information to print
+    Please pay special attention to the README here
+    ********************************************************/
 
-    /* STUDENT_TODO: Change this condition. How can you check if the database
-     * has the desired course? */
-    if (false) {
-      std::cout << "Found course: " << course->title << ","
-                << course->number_of_units << "," << course->quarter << "\n";
-    } else {
-      std::cout << "Course not found.\n";
-    }
+    std::string output = /* STUDENT_TODO */
 
+    /********************************************************
+     DO NOT MODIFY ANYTHING BELOW THIS LINE PLEASE
+    ********************************************************/
+
+    std::cout << output << std::endl;
     return 0;
   }
   

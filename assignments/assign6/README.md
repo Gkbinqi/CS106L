@@ -1,14 +1,11 @@
 # Assignment 6: Explore Courses
 
-Due Friday, November 15th at 11:59PM
+Due Sunday, March 3rd at 11:59PM
 
 ## Overview
 
-> [!IMPORTANT]
-> To complete this assignment you'll need the content in the lecture on November 12th.
-> We've scoped this assignment such that it should be reasonable to finish it by Friday, even though the lecture is on Tuesday.
-
-In this assignment you will be exercising your understanding of `std::optional`. We'll be making use of the same `courses.csv` from assignment 1. You are tasked to write one function for this assignment, which attempts to find the a `Course` in the `CourseDatabase` object, and return it. Take a look at the code and review the `CourseDatabase` class to understand the interface.
+In this assignment you will be exercising your understanding of `std::optional`. We'll be making use of the same `courses.csv` from assignment 1. You are tasked to write one function for this assignment, which attempts to find the a `Course` in the `CourseDatabase` object, and return it.
+You'll also explore the monadic operations that come with the `std::optional` class. Take a look at the code and review the `CourseDatabase` class to understand the interface.
 
 ## Running your code
 
@@ -55,7 +52,7 @@ This function takes in a string `course_title`, and the function should try to f
 > [!NOTE]
 > You need to change the type returned by `find_course` which is currenty `FillMeIn`.
 
-## Part 2: Change the conditional in the `main` function
+## Part 2: Modifying the `main` function
 
 Notice that we call the `find_course` here in the `main` function:
 
@@ -63,18 +60,56 @@ Notice that we call the `find_course` here in the `main` function:
 auto course = db.find_course(argv[1]);
 ```
 
-Now, you need to change the conditional that prints out whether or not a course is found.
-Currently the conditional is:
+Now, you need to make use of the [monadic operations](https://en.cppreference.com/w/cpp/utility/optional) to populate the `output` string properly. Let's walk through how to do this.
 
+Here's the behavior that you want to recreate, **without using any conditionals** like `if` statements:
 ```cpp
-if (false) {...}
+if (course.has_value()) {
+    std::cout << "Found course: " << course->title << ","
+            << course->number_of_units << "," << course->quarter << "\n";
+} else {
+    std::cout << "Course not found.\n";
+}
 ```
 
-Think about the type of `course`, and the interface of that type.
+Very simply, if there is a course then the line at the bottom of `main` 
+
+```cpp
+std::cout << output << std::end;
+```
+
+Should produce:
+```bash
+Found course: <title>,<number_of_units>,<quarter>
+```
+
+if there is no course then
+
+```cpp
+std::cout << output << std::end;
+```
+
+Should produce:
+```bash
+Course not found.
+```
+
+### Hints:
+There are three monadic operations `and_then`, `transform`, and `or_else`. Read the description of each of them in the lecture slides, and take a look at [here](https://en.cppreference.com/w/cpp/utility/optional). Namely, you only need 2 of the mondadic operations.
+
+Your code should end up looking something like this:
+
+```cpp
+    std::string output = course.<MONADIC_FN1>(<SOME LAMBDA FN>)
+    .<MONADIC_FN2>(...);
+```
+
+Notice the lambda function being passed into the first monadic function. This should be a hint! **Think about what type output is** and what you're monadic opertaions therefore need to return/produce.
+
 
 ## 🚀 Submission Instructions
 
-Before you submit the assignment, please fill out this [short feedback form](https://forms.gle/VWH3ADoSDfBgxiSG9). **Completion of the form is required to receive credit for the assignment.** After filling out the form, please upload the files to Paperless under the correct assignment heading.
+Before you submit the assignment, please fill out this [short feedback form](https://forms.gle/11LreWzsMa5U8VTT9). **Completion of the form is required to receive credit for the assignment.** After filling out the form, please upload the files to Paperless under the correct assignment heading.
 
 Your deliverable should be:
 
