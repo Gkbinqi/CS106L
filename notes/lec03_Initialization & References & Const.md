@@ -26,7 +26,8 @@ Student s{"Sarah", "CA", 21};
 ```
 TLDR: use uniform initialization to initialize every field of your non-primitive typed variables - but be careful not to use vec(n, k)! 
 
-### Use of `auto`
+##### Use of `auto`
+
 > Keyword used in lieu of type when declaring a variable, tells the compiler to deduce the type.  
 
 e.g. Quadratic  
@@ -73,7 +74,8 @@ We should use it to reduce long type name while it doesn't make the code less st
 
 Cool.  
 
-### Structured Binding
+##### Structured Binding
+
 > Structured binding lets you initialize directly from the contents of a struct.  
 
 Before:  
@@ -106,20 +108,6 @@ Here is the code above using structured binding:
  }
 ```
 
-### `std::vector<T>`
-> https://en.cppreference.com/w/cpp/container/vector
-
-```
-std::vector<int> v;
-std::vector<int> v(n, k);
-v.push_back(k);
-v[i] = k;
-int k = v[i];
-v.empty();
-v.size();
-v.clear();
-```
-
 ### References
 > An alias (别名, another name) for a named variable
 
@@ -135,10 +123,10 @@ std::cout << original << std::endl; // {1, 2, 3, 5}
 std::cout << copy << std::endl;     // {1, 2, 4}
 std::cout << ref << std::endl;      // {1, 2, 3, 5}
 ```
-Here **“=”** automatically makes a copy because **operator overloading**! If we don't want it we must use & to avoid this.
-It's all about using `&` to create a alias.
-
-
+* Here **“=”** automatically makes a copy because **operator overloading**! If we don't want it we must use & to avoid this.
+  It's all about using `&` to create a alias
+* We can declare a function parameter be a reference so that it won't make a copy when passing parameter.
+* We can also return a reference which won't make a copy
 
 ##### code 01
 
@@ -182,7 +170,8 @@ void shift(vector<std::pair<int, int>>& nums) {
 }
 ```
 
-### left value & right value
+##### left value & right value
+
 > **We can only create references to variables! Not r-value!**
 
 |l-values|r-values|
@@ -216,10 +205,19 @@ auto my_nums = {{1, 1}};
 shift(my_nums);// correct
 ```
 
+##### what is `size_t`?
 
-### what is `size_t`?
 > https://www.embedded.com/why-size_t-matters/  
 > When you see an object declared as a size_t , you immediately know it represents a size in bytes or an index, rather than an error code or a general arithmetic value.  
+
+##### `*` and `&` for variables and types
+
+* for variables:
+  * `*` means **dereference**
+  * `&` means **get the address of this variable**
+* for types:
+  * `*` means **a pointer points to a address that stores this type**
+  * `&` means **reference**
 
 ### keyword `const`
 > `const` indicates that a variable can not be modified.

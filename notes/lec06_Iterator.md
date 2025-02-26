@@ -197,6 +197,7 @@ std::sort(set.begin(), set.end());
 
 * An ***iterator*** points to a ***container element***
 * A ***pointer*** points to ***any object***
+* Remember, they two are similar but **NOT THE SAME THING**!
 
 ##### Memory Basics
 

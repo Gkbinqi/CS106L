@@ -14,7 +14,10 @@
 #include <string>
 #include <unordered_set>
 
-std::string kYourName = "STUDENT TODO"; // Don't forget to change this!
+// self include
+#include <sstream>
+
+std::string kYourName = "Binqi Wang"; // Don't forget to change this!
 
 /**
  * Takes in a file name and returns a set containing all of the applicant names as a set.
@@ -29,6 +32,16 @@ std::string kYourName = "STUDENT TODO"; // Don't forget to change this!
  */
 std::set<std::string> get_applicants(std::string filename) {
   // STUDENT TODO: Implement this function.
+  std::ifstream ifs(filename);
+  std::string s;
+  std::set<std::string> applicants;
+
+  if (!ifs.is_open()) exit(1);
+  while(getline(ifs, s)) {
+    applicants.insert(s);
+  }
+  ifs.close();// 有开必有关!
+  return applicants;
 }
 
 /**
@@ -41,6 +54,30 @@ std::set<std::string> get_applicants(std::string filename) {
  */
 std::queue<const std::string*> find_matches(std::string name, std::set<std::string>& students) {
   // STUDENT TODO: Implement this function.
+  std::queue<const std::string*> matched_ones;
+  std::string first, last;
+  std::stringstream ss(name);
+  ss >> first >> last;
+  for (auto it = students.begin(); it != students.end(); ++it) { // 为熟练iterator, 故使用该方式
+    ss.clear();
+    ss << *it;
+    std::string it_f, it_l;
+    ss >> it_f >> it_l;
+    if (first[0] == it_f[0] && last[0] == it_l[0]) {
+      // 注意iterator和pointer虽然相似, 但并非相同, 需要先解iterator引用, 再取string地址
+      matched_ones.push(&(*it));
+    }
+  }
+
+  // 测试选取的queue的元素
+  std::cout << "choosen ones: " << '\n';
+  size_t size = matched_ones.size();
+  for (int i = 0;i < size; matched_ones.pop(), ++i) {
+    std::cout << *matched_ones.front() << '\n';
+    matched_ones.push(matched_ones.front());
+  }
+
+  return matched_ones;
 }
 
 /**
@@ -55,6 +92,10 @@ std::queue<const std::string*> find_matches(std::string name, std::set<std::stri
  */
 std::string get_match(std::queue<const std::string*>& matches) {
   // STUDENT TODO: Implement this function.
+  if (matches.empty()) {
+    std::cout << "NO MATCHES FOUND." << '\n';
+    return "NO MATCHES FOUND.";
+  } else return *matches.front();
 }
 
 /* #### Please don't remove this line! #### */
