@@ -214,10 +214,15 @@ shift(my_nums);// correct
 
 * for variables:
   * `*` means **dereference**
+    * `int* a; *a = 100;`
   * `&` means **get the address of this variable**
+    * `int* a; int b = 3; a = &b;`
 * for types:
   * `*` means **a pointer points to a address that stores this type**
+    * `std::Vector<std::string*>* vp;`
   * `&` means **reference**
+    * `int a = 3; int& b = a`
+    * `T& MyContainer::at(size_t index);` 返回一个引用
 
 ### keyword `const`
 > `const` indicates that a variable can not be modified.

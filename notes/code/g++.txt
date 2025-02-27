@@ -1,1 +1,1 @@
-g++ -static-libstdc++ -std=c++20 main.cpp -o main
+g++ -static-libstdc++ -std=c++23 main.cpp -o main
