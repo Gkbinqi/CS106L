@@ -57,23 +57,31 @@ void Vector<T>::push_back(const T& value)
 }
 
 template <class T>
-const T& Vector<T>::at (size_t index) const
-{
+T& Vector<T>::at (size_t index) {
   if (index < 0 || index >= _size)
   {
     throw std::out_of_range("Index out of range!");
   }
   return _data[index];
 }
+template <class T>
+const T& Vector<T>::at (size_t index) const
+{
+  return const_cast<Vector<T>&>(*this).at(index);
+}
 
 template <class T>
-const T& Vector<T>::operator[](size_t index)
-{
+T& Vector<T>::operator[](size_t index) {
   if (index < 0 || index >= _size)
   {
     throw std::out_of_range("Index out of range!");
   }
   return _data[index];
+}
+template <class T>
+const T& Vector<T>::operator[](size_t index) const
+{
+  return const_cast<Vector<T>&>(*this)[index];
 }
 
 template <typename T>
@@ -92,6 +100,11 @@ template <class T>
 size_t Vector<T>::size () const
 {
   return _size;
+}
+
+template <typename T>
+size_t Vector<T>::capacity() const {
+  return _capacity;
 }
 
 template <class T>

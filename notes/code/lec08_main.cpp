@@ -23,5 +23,11 @@ int main() {
     }
     printVector_const(v);
     printVector_notconst(v);
+    printVector_const(v);
+    for(auto i : v) { // iterator
+        std::cout<< i;
+    }
+    std::cout << '\n';
+    std::cout << "size: " << v.size() << ' ' << "capacity: " << v.capacity() << '\n';
     return 0;
 }
