@@ -9,12 +9,16 @@ public:
   using iterator = T*;
 
   Vector();
+  Vector(const Vector& other);
+  Vector(Vector&& other) noexcept;
   ~Vector();
 
   void push_back(const T& value);
 
-  T& at (size_t index) const;
-  T& operator[](size_t index);
+  const T& at (size_t index) const;
+  const T& operator[](size_t index);
+  T& front();
+  T& back();
 
   size_t size () const;
   bool empty () const;
