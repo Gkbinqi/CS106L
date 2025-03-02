@@ -1,19 +1,31 @@
 #include <string>
-#incldue <set>
+#include <set>
+#include <random>
+#include <iostream>
 
 class Canteen {
 private:
-    std::string ID;
-    std::string location;
+    static const std::vector<std::string> all_dishes = {
+    "Pizza", "Burger", "Salad", "Pasta", "Soup",
+    "Steak", "Sushi", "Rice", "Noodles", "Curry"
+    };
+    std::string ID_;
+    std::string location_;
+    size_t capacity_;
+    size_t menu_size_;
 
-    size_t capacity;
-    std::set<std::string> menu;
-    std::set<std::string> all_dished;
+    std::set<std::string> dishes_;
 
-    bool refresh_menu();
+    std::set<std::string> generate_menu();
 public:
     Canteen();
-    Canteen(std::string ID, std::string location, size_t capacity);
-    std::string get_ID();
-    std::string get_location();
-}
+    Canteen(const std::string& ID, const std::string& location, size_t capacity, size_t menu_size);
+    ~Canteen();
+
+    const std::string& get_ID() const;
+    const std::string& get_location() const;
+    std::set<std::string> get_menu();
+    const std::set<std::string>& get_dishes() const;
+
+    void add_dish(const std::string& dish);
+};
