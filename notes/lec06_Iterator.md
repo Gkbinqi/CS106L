@@ -70,10 +70,10 @@ Now we can
 * All iterators provide four operations:
 
 ```
-auto it = c.begin();
-++it;
-*it;
-it == c.end()
+auto it = c.begin(); // copy iterator
+++it; // move to next one
+*it; // deref
+it == c.end() // end check
 ```
 
 * But most provide even more
@@ -88,7 +88,7 @@ it1 < it2 // Is before?
 ##### Input Iterator
 
 * Most basic kind of iterator
-* Allows us to read elements
+* Allows us to **read** elements
 
 `auto elem = *it;`
 
@@ -106,7 +106,7 @@ int m = it->zarf;
 
 ##### Output Iterator
 
-* Allows us to write elements
+* Allows us to **write** elements
 
 `*it = elem;`
 
@@ -150,7 +150,7 @@ auto& second = it[2];
 
 ##### Difference: ++i & i++
 
-* Conclusion first: `++i` is better than `i++`, most of the time we should use `++i`.
+* Conclusion first: `++i` is better than `i++`, **most of the time we should use `++i`.**
   * using `++i` never lose anything while sometimes we gain something.
 
 * reason: `++it` avoids making an **unnecessary copy**

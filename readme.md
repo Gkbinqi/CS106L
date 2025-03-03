@@ -11,3 +11,5 @@ assign2: 2025/2/26 用时1h 完成iterator后即可开始
 assign3: 完成lec8再说
 
 cur: lec09
+
+lec08 note code: 如果type为一个类, 如何释放内存

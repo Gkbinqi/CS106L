@@ -61,7 +61,8 @@
         "typeinfo": "cpp",
         "variant": "cpp",
         "complex": "cpp",
-        "cinttypes": "cpp"
+        "cinttypes": "cpp",
+        "ios": "cpp"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }

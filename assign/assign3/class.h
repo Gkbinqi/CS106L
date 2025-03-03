@@ -5,6 +5,7 @@
 
 class Canteen {
 private:
+    static const size_t max_menu_size = 10;
     static const std::vector<std::string> all_dishes = {
     "Pizza", "Burger", "Salad", "Pasta", "Soup",
     "Steak", "Sushi", "Rice", "Noodles", "Curry"
