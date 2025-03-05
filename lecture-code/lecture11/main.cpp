@@ -1,5 +1,5 @@
 #include <iostream>
-#include "include/StanfordID.h"
+#include "src/StanfordID.cpp"
 
 int main() {
     StanfordID jacob{ "Jacob Roberts-Baca", "jtrb", 12345678 };
@@ -9,6 +9,7 @@ int main() {
     } else {
         std::cout << fabio.getName() << " has a lower ID number than " << jacob.getName() << std::endl;
     }
-    auto result = jacob $ fabio;
+
+    std::cout << jacob << fabio;
     return 0;
 }

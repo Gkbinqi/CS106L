@@ -180,11 +180,89 @@ Concepts greatly improve compiler errors
 
 ### Variadic Templates(可变参数)
 
-> page 82
+> How do we create a function that accepts a variable number of parameters?
 
-### Template Metaprogramming
+##### Templates + recursion
 
-> run code at compile time
+Let the compiler write the overloads for us.
+
+```c++
+// base case function. Needed to stop recursion
+template <Comparable T>
+T min(const T& v) { return v; }
+
+// 
+template <Comparable T, Comparable... Args> // Variadic template: matches 0 or more types
+T min(const T& v, const Args&... args) { // Parameter pack: 0 or more parameters
+	auto m = min(args...); // Pack expansion: replaces ...args with actual parameters
+	return v < m ? v : m;
+}
+```
+
+##### generate flow
+
+page 107 ~ 122
+
+it will generate a series of function along the way to the base case.
+
+##### recap
+
+* Compiler generates any number of overloads using recursion
+  * This allows us to support any number of function parameters
+* For more advanced variadic templates, check the hidden slides! page 107 ~ 122
+  * If you’re curious, this technique is how std::tuple works!
+* Instantiation happens at **compile time**
+  * Templates do work at compile time. Can we use this to our advantage?
+    * the answer is, yes.
+
+### Template Meta-programming
+
+> run code at **compile time**
+
+##### TMP Basics: Factorial
+
+```c++
+// base case: This is a template specialization for N=0
+template <>
+struct Factorial<0> {
+	enum { value = 1 }; // enum: a way to store a compile-time constant
+};
+template <size_t N>
+struct Factorial {
+	enum { value = N * Factorial<N - 1>::value }; // compile-time recursion
+};
+std::cout << Factorial<7>::value << std::endl;
+```
+
+All of **Template instantiations** for Factorial<7> happens at compile-time!
+
+##### `constexpr`/`consteval`
+
+> An institutionalization of template metaprogramming (new in C++20)
+
+```c++
+constexpr size_t factorial(size_t n) { // constexpr: try to run me at compile time
+	if (n == 0) return 1;
+	return n * factorial(n - 1);
+}
+
+consteval size_t factorial(size_t n) { // consteval: MUST RUN ME AT COMPILE TIME
+	if (n == 0) return 1;
+	return n * factorial(n - 1);
+}
+```
 
 
 
+### Recap
+
+When should I use templates?
+
+* I want the compiler to automate a repetitive coding task
+  * Template functions, variadic templates
+* I want better error messages
+  * `concepts`
+* I don’t want to wait until runtime
+  * Template metaprogramming, `constexpr`/`consteval`
+
+Next Time: Functions and Algorithms Writing smarter, more flexible algorithms
