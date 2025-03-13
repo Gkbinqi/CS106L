@@ -8,9 +8,9 @@ assign1: 2025/2/23 用时1h 完成前五个lecture(lec05 container)后即可开�
 
 assign2: 2025/2/26 用时1h 完成iterator后即可开始
 
-assign3: 2025/3/13
+assign3: 2025/3/13 完成class相关内容后即可开始
 
-assign4: doing
+assign4: doing 完成lec10后即可开始
 
 cur: lec14
 
