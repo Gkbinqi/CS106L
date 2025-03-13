@@ -10,8 +10,12 @@ public:
 
   Vector();
   Vector(const Vector& other);
-  Vector(Vector&& other) noexcept;
+  Vector& operator=(const Vector& other);
+
   ~Vector();
+
+  Vector(Vector&& other) noexcept;
+  Vector& operator=(Vector&& other) noexcept;
 
   void push_back(const T& value);
 

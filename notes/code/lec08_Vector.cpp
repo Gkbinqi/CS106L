@@ -11,20 +11,41 @@ Vector<T>::Vector()
 }
 
 template <typename T>
-Vector<T>::Vector(const Vector& other) : _size(other._size), _capacity(other._capacity) {
-  this->_data = new T[_capacity];
+Vector<T>::Vector(const Vector& other)
+: _size(other._size), _capacity(other._capacity), _data(new T[_capacity]) {
   for (size_t i = 0; i < _size; ++i) {
     this->_data[i] = other._data[i];
   }
 }
 
 template <typename T>
+Vector<T>& Vector<T>::operator=(const Vector& other) {
+  this->_capacity = other._capacity;
+  this->_size = other._size;
+  this->_data = new T[_capacity];
+  for (size_t i = 0; i < _size; ++i) {
+    this->_data[i] = other._data[i];
+  }
+  return *this;
+}
+
+template <typename T>
 Vector<T>::Vector(Vector&& other) noexcept 
-: _size(other.size), _capacity(other._capacity), _data(other._data) {
+: _size(other._size), _capacity(other._capacity), _data(other._data) {
   other._data = nullptr;
   other._size = 0;
   other._capacity = 0;
+  std::cout << "Move sematic called" << '\n';
 }
+
+template <typename T>
+Vector<T>& Vector<T>::operator=(Vector&& other) noexcept {
+  if (!this->_data) delete[] _data;
+  this->_capacity = other._capacity;
+  this->_size = other._size;
+  this->_data = other._data;
+  std::cout << "Move sematic called" << '\n';
+};
 
 template <class T>
 Vector<T>::~Vector()

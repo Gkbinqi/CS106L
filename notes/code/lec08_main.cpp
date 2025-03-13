@@ -22,6 +22,11 @@ std::ostream& operator<< (std::ostream& os, const std::set<size_t>& s) {
     return os;
 }
 
+Vector<size_t> get_vec() {
+    Vector<size_t> v{1,2,3,4,5};
+    return v;
+}
+
 int main() {
     Vector<size_t> v;
     for (size_t i = 0; i < 100; ++i) {
@@ -46,5 +51,12 @@ int main() {
     }
     std::cout << '\n';
     std::cout << "size: " << v2.size() << ' ' << "capacity: " << v2.capacity() << '\n';
+    
+    std::cout << "call v = v2" << '\n';
+    v = v2;
+
+    std::cout << "call Vector<size_t> v3 = get_vec();" << '\n';
+    Vector<size_t> v3 = get_vec();
+
     return 0;
 }
