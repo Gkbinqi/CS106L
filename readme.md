@@ -14,4 +14,4 @@ assign4: doing 完成lec10后即可开始
 
 cur: lec14
 
-lec08 note code: 如果type为一个类, 如何释放内存
+cs106L传来噩耗, 课内事务集体袭来强如怪物, 拼尽全力无法战胜, 只能四月再来学习
