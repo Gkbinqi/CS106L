@@ -69,8 +69,8 @@ There are two ways to overload:
     }
     ```
 
-  * ```.h file
-    #include StanfordID.h
+  * ```.cpp file
+    #include "StanfordID.h"
     bool operator< (const StanfordID& lhs, const StanfordID& rhs)
     {
     	return lhs.idNumber < rhs.idNumber;
