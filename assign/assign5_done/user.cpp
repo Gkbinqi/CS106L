@@ -67,6 +67,7 @@ void User::set_friend(size_t index, const std::string& name)
 // Part1 overload <<
 // exapmle output: User(name=Alice, friends=[Bob, Charlie])
 std::ostream& operator << (std::ostream& os, const User& user) {
+  // 注意无需换行
   os << "User(name=" << user._name << ", friends=[";
   for(size_t i = 0; i < user._size; ++i) {
     os << user._friends[i];
