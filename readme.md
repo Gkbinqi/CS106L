@@ -16,4 +16,8 @@ assign4: 2025/3/29 课内事务导致耽搁了很久 这次assign很有趣 用�
 
 assign5: 2025/3/31 用时40min 写起来很好玩 简单的练习SMFs和overloading 完成lec11, 12即可 lec13也可以看看
 
-assign6 & lec14, 15:cur
+assign6: lec14后即可开始
+
+Rev
+
+assign7: 看了个大概 会用到整个课程的知识 先复习一下再说
