@@ -22,7 +22,9 @@ int width;
 int height;
 int* data;
 };
----
+
+Photo takePhoto(); // return a photo
+
 Photo selfie = takePhoto();
 ```
 
@@ -68,7 +70,8 @@ void foo(Photo pic) {
 
 * A l-value can appear on either side of an = while a r-value can appear only right of an =
 
-  * `x = y; y = 5;`, `x = 5; 5 = y;// invalid here` ~~5 = y~~ is invalid.
+  * `x = y; y = 5;`,
+  * `x = 5; 5 = y;// invalid here` ~~5 = y~~ is invalid.
 
 * l-value’s lifetime is until **the end of scope**, r-value’s lifetime is **until the end of line**
 
@@ -109,7 +112,7 @@ Now we have two special type of SMFs
 
 * Like `const_cast`, we ”opt in” to potentially error-prone behaviour
   * What if we try to use an object after it’s been moved!
-* Try to avoid explicitly using std::move unless you have good reason!
+* Try to avoid explicitly using `std::move` unless you have good reason!
   * E.g. performance really matters, and you know for sure the object won’t be used!
 
 
