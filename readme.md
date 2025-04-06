@@ -18,6 +18,5 @@ assign5: 2025/3/31 用时40min 写起来很好玩 简单的练习SMFs和overload
 
 assign6: lec14后即可开始
 
-Rev
-
-assign7: 看了个大概 会用到整个课程的知识 先复习一下再说
+cur: 复习全课程 然后进行assign7, 之后进行HWs
+assign7: 看了个大概 会用到整个课程的知识
