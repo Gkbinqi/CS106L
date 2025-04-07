@@ -10,13 +10,12 @@ assign3: 2025/3/13 完成class相关内容后即可开始
 
 cs106L传来噩耗, 课内事务集体袭来强如怪物, 拼尽全力无法战胜, 只能四月再学习
 
-assign4: 2025/3/29 课内事务导致耽搁了很久 这次assign很有趣 用时约3h 主要为复习课内的range,view的内容 以及debug 很多地方稍有不慎就会出错, 如transform, 以及选择逻辑中要不要加'!'取反. 
+assign4: 2025/3/29 课内事务导致耽搁了很久 这次assign很有趣 用时约3h 主要为复习课内的range,view的内容 以及debug 很多地方稍有不慎就会出错, 如transform, 以及选择逻辑中要不要加'!'取反.
 
 越上越无奈大一学了一年的cpp课程
 
 assign5: 2025/3/31 用时40min 写起来很好玩 简单的练习SMFs和overloading 完成lec11, 12即可 lec13也可以看看
 
-assign6: lec14后即可开始
+assign6: 2025/4/6 用时40min lec14后即可开始 简单复习lambda和std 有个小坑 要用 g++ -static-libstdc++ -std=c++23 main.cpp -o main, 23版本来编译才能使用transform, and_then和or_else
 
-cur: 复习全课程 然后进行assign7, 之后进行HWs
-assign7: 看了个大概 会用到整个课程的知识
+assign7: 2025/4/7 Part1 30min cur: rev and Part2, 还有很多细节需要复习 const corectness, move的检查之类的小问题都要去看看

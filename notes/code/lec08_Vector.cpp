@@ -40,7 +40,9 @@ Vector<T>::Vector(Vector&& other) noexcept
 
 template <typename T>
 Vector<T>& Vector<T>::operator=(Vector&& other) noexcept {
+  if (this == &other) return *this;
   if (!this->_data) delete[] _data;
+  
   this->_capacity = other._capacity;
   this->_size = other._size;
   this->_data = other._data;

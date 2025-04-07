@@ -5,13 +5,20 @@ Unique Pointer
 --------------
 
 Q1. List one or two benefits of using RAII to manage memory instead manually calling `new` and `delete`.
-A1. TODO
+A1. 
+a. we can avoid tiring new and delete matching check
+b. we can avoid memory leak when there be a exception between a pair of new and delete
+c. it's cool and cute.
 
 Q2. When implementing move semantics for a `unique_ptr`, for example 
 in the move constructor `unique_ptr(unique_ptr&& other)`, it is essential that 
 we set the underlying pointer of the `other` parameter to `nullptr` before exiting the function. 
 Explain in your own words what problem would arise if we did not.
-A2. TODO
+A2. 
+if we dont, then other will points to the same memory of This
+and since other is a r-value, once it is out of line, it will delete and the memory
+it points to will be delete, which makes this will finally points to a deleted memory
+and cause undefined behaviour. 
 
 Q3. This method of recursive deallocation through RAII works great for small lists
 , but may pose a problem for longer lists. Why? 
