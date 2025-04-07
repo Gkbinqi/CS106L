@@ -1,8 +1,6 @@
 # Lec 03 Initialization & References & Const
 
-> 2025/1/6
-
-### Initialization
+### Initialization & Uniform initialization
 > How we provide initial values to variables  
 
 e.g. Multiple ways to initialize a pair...  
@@ -14,12 +12,12 @@ numSuffix2.second = "nd";
 std::pair<int, string> numSuffix2 = std::make_pair(3, "rd"); // third
 ```
 
-**Uniform initialization**:  
-Curly bracket initialization. Available for **all types**, immediate initialization on declaration!
+##### **Uniform initialization**:  
+Curly bracket initialization `{}`. Available for **all types**, immediate initialization on declaration!
 
 > https://www.onlinegdb.com/8uxNBkJBx
 
-```
+```.cpp file
 std::vector<int> vec{1,3,5};
 std::pair<int, string> numSuffix1{1,"st"};
 Student s{"Sarah", "CA", 21};

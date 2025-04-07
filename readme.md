@@ -18,4 +18,14 @@ assign5: 2025/3/31 用时40min 写起来很好玩 简单的练习SMFs和overload
 
 assign6: 2025/4/6 用时40min lec14后即可开始 简单复习lambda和std 有个小坑 要用 g++ -static-libstdc++ -std=c++23 main.cpp -o main, 23版本来编译才能使用transform, and_then和or_else
 
-assign7: 2025/4/7 Part1 30min cur: rev and Part2, 还有很多细节需要复习 const corectness, move的检查之类的小问题都要去看看
+assign7: 2025/4/7 Part1 30min 
+
+cur: rev. 还有很多细节要再仔细看看const corectness, Template, Algorithms, lambda, ranges&view, SMFs, move, RAII
+
+这段时间会复习一遍课程, 重构笔记, 之前的笔记有很多不理解的地方, 悬而未决的问题. 现在可以去解决了
+
+已完成note：lec02，lec12(doing)
+
+复习完毕后, 再完成assign7
+
+附: 善用ai帮助学习, 以及, deepseek出来一段时间后GPT变聪明了好多, 有压力才有动力吗😂

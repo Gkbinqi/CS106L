@@ -12,14 +12,14 @@
 ### STL
 > STL = Standard Template Library  
 
-Which contains TONS of functionality (algorithms, containers, functions, iterators) some of which we will explore in this class  
+Which contains TONS of functionality (Mainly four parts: **algorithms, containers, functions, iterators**) some of which we will explore in this class  
 The namespace for the STL is **std** -- **std** is the abbreviation for *standard*  
 To access elements from the STL use **std::**
 
 ### Types
 C++ Fundamental Types(primitive types)  
 
-```
+```.cpp file
 int val = 5; //32 bits
 char ch = 'F'; //8 bits (usually)
 float decimalVal1 = 5.0;  //32 bits (usually)
@@ -46,8 +46,7 @@ Types Checked on the fly, during execution, line by line. Example: Python
 * Statically typed, compiled:   
 Types before program runs during compilation-Example: C++
 
-Using static typing helps us to prevent errors before our 
-code runs.
+Using static typing helps us to prevent errors before our code runs.
 
 ### static types & function
 It can define a mapping, function from some types to other types  
@@ -63,9 +62,9 @@ void -> string
 ### Function Overloading
 > Define two functions with the same name but have different types.  
 
-Core: same name but different **function signature**.  
+Core: same name but different **function signature**(name, parameter type and return value type).  
 
-```
+```.cpp file
 int half(int x) {  
 	std::cout << “1” << endl;
 	return x / 2;
@@ -80,7 +79,7 @@ half(3.0) // uses version (2), returns 1.5
 
 Another example:
 
-```
+```.cpp file
 int half(int x, int divisor = 2) {
 	return x / divisor;
 }
@@ -95,7 +94,7 @@ half(3.0) // uses version (2), returns 1.5
 ### Struct
 > A group of named variables each with their own type. A way to bundle different types together
 
-```
+```.cpp file
 struct Student {
 	string name; // these are called fields
 	string state; // separate these by semicolons
@@ -134,14 +133,14 @@ std::cout << foundStudent.name << std::endl; // Sarah
 * std::pair is a template: You specify the types of the fields inside <> for each pair object you make  
 * The fields in std::pairs are named first and second
 
-```
+```c++
 std::pair<int, string> numSuffix = {1,"st"};
 std::cout << numSuffix.first << numSuffix.second << std::endl; //print 1st
 ```
 Use `std::pair` to return success + result  
 To avoid specifying the types of a pair, use `std::make_pair(field1, field2)` 
 
-```
+```.cpp file
 std::pair<bool, Student> lookupStudent(string name) {
 	Student blank;
 	if (notFound(name)) return std::make_pair(false, blank);
@@ -155,7 +154,7 @@ std::pair<bool, Student> output = lookupStudent(“Julie”);
 > Keyword used in lieu(替代) of type when declaring a variable, tells the compiler to deduce the type automatically.  
 > **`auto` doesn't mean that the variable don’t have a type. It means that the type is deduced by the compiler.**    
 
-```
+```.cpp file
 // What types are these?
 auto a = 3; // int
 auto b = 4.3; // double
