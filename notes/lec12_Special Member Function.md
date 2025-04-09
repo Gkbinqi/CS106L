@@ -29,11 +29,11 @@ widgetOne = widgetTwo;
 // again, difference between implementing constructor & assigner
 ```
 
-* A **constructor** is called every time when a new instance of the class is created, and the destructor is called when it **goes out of scope**
+* A **constructor** is called every time when a new instance of the class is created, and the **destructor** is called when it **goes out of scope**
 
-### Copy constructor & Copy assignment
+### Constructor & Copy Operation
 
-##### Copy constructor
+##### Constructor
 
 * Initializer Lists
 
@@ -42,7 +42,7 @@ widgetOne = widgetTwo;
   Vector<T>::Vector() : _size(0), _capacity(4), _data(new T[_capacity]) { }
   ```
 
-  * It’s **quicker and more efficient** to directly construct member variables with intended values
+  * First, It’s **quicker and more efficient** to directly construct member variables with intended values
 
     * There are two steps happening here: the **first** is that `_size`, `_capacity`, and `_data` may have been default initialized
 
@@ -51,7 +51,7 @@ widgetOne = widgetTwo;
       Vector<T>::Vector()
       {
        _size = 0; // we may do two things here: default initialize, and then assign a new value.
-       _capacity = 4; // if the member type here is a customer type which will do memory management, we actually do some extra work.
+       _capacity = 4; // if the member type here is a customer type which need initialization(constrction), we will first call it's default constructor, then using copy assign.
        _data = new T[_capacity];
       }
       ```
@@ -65,14 +65,17 @@ widgetOne = widgetTwo;
       ```c++
       template <typename T>
       Vector<T>::Vector() : _size(0), _capacity(4), _data(new T[_capacity]) { }
+      // my way to comprehend: it's like calling the constructor
+      // just like MyClass c(some args...)
+      // so we do all the things at the initialization
       ```
-
+  
     * Now the member variables are declared and initialized at once with more efficiency, cool.
-
-  * Can be used for any constructor, even non-default ones with parameters!
-
-  * What if the variable is a non-assignable type?
-
+  
+  * Second, Can be used for any constructor, even non-default ones with parameters!
+  
+  * Third, What if the variable is a non-assignable type?
+  
     ```c++
     template <typename T>
     class MyClass {
@@ -83,9 +86,9 @@ widgetOne = widgetTwo;
      MyClass(int value, int& ref) : _constant(value), _reference(ref) { }
     };
     ```
-
+  
     * This code only works with initializer lists, WHY? page 33 - 35
-
+  
       * In C++, **`const` members** and **reference members** **must** be initialized when the object is constructed — and they **cannot be assigned inside the constructor body**.
         * `const` members must be initialized **exactly once**, **at construction**.
         * References must be **bound to something** at construction, and can't be rebound.
@@ -95,19 +98,21 @@ widgetOne = widgetTwo;
           * for the constant, we are trying to modify a const variable, which will cause error
           * for the reference, since reference can't be rebound, we are actually reassign the **value** of this reference rather than rebound it to something else. However, by default initialization, which value are reference refer to?
             * we are assign value to the abyss.
-
+  
       * TLDR version by gpt
-
+  
         * Initializer lists are **required** for:
-
+  
           - `const` members
           - `reference` members
           - Base classes (if you're doing inheritance)
           - Members of classes without default constructors
-
+  
           They run **before the constructor body**, which is when these special kinds of members must be set.
 
-##### Copy assignment:
+##### Copy constructor & Copy assignment:
+
+
 
 Here we need to notice that since the two objects are exist when doing copy assignment, there may be these problem:
 
@@ -121,33 +126,54 @@ Here when implementing copy assignment overloading, we need to do more check and
 // assuming MyClass is managing a chunk of memory pointed using _data
 class Myclass {
 private: 
-    int* _data; // assume we are sure that _data will points to an array 
+    int* _data; // assume we are sure that _data will points to an array
+    size_t _size;
 public:
     MyClass& operator=(const MyClass& other);
 }
 
 MyClass& MyClass::operator=(const MyClass& other) {
   if (this == &other) return *this; // check one, whether we are try to do a=a. If so, do nothing
-  if (_data != nullptr) delete[] _data; // check two, whether `this` is managing its memory. If so, delete it
+  if (_data != nullptr) delete[] _data; // check two, whether `this` is managing its memory. If so, delete it. If we dont do the check one, undefined behaviour comes later.
 
-  this->_data = other._data;
+  // some deep copy operation here...
+    
   return *this;
 }
 ```
 
-
-
-
-
-// mark, 2025/4/7 refractor
-
 ### Why overloads SMFs?
 
-* This is member-wise copying, It's won't work well with manually allocated memory like pointers.
-* We want to create a copy that does more than just copies the member variables
-* We will want to make a **deep copy**
-  * Deep copy: an object that is a complete, independent copy of the original
+Compiler will generate SMFs for us, but...
+
+##### The problem using default copy
+
+* e.g. Default Copy Constructor
+
+  ```.cpp file
+  template <typename T>
+  Vector<T>::Vector<T>(const Vector::Vector<T>& other) :
+  _size(other._size), _capacity(other._capacity), _data(other._data) { }
+  ```
+
+  * By default, the copy constructor will create **copies** of each member variable
+  * This is member-wise copying, It's won't work well with manually allocated memory like pointers.
+  * If your variable is a pointer, a member-wise copy will point to the same allocated data, not a new chunk of memory
+    * Also called shallow copy, which is problematic because anything done to one pointer affects the other
+
+* Most of the time we want to make a **deep copy**
+  * Deep copy: an object that is a complete, **independent copy** of the original
+
 * So we'd want to override it.
+
+  * Declare them in the header and write their implementation in the .cpp, like any function!
+
+  ```.cpp file
+  Vector<T>::Vector(const Vector<T>& other)
+   : _size(other._size), _capacity(other._capacity), _data(new T[other._capacity]) {
+   for (size_t i = 0; i < _size; ++i) _data[i] = other._data[i];
+  }
+  ```
 
 ##### default & delete
 
@@ -155,9 +181,9 @@ delete:
 
 * We can delete special member functions, here to prevent copy
 
-  * Setting a special member function to delete removes its functionality!
+  * Setting a special member function to `delete` removes its functionality!
 
-  * ```c++
+    ```c++
     class IntVec{
     public:
     	IntVec();
@@ -174,25 +200,59 @@ delete:
 * Why?
 
   * We can selectively allow functionality of special member functions!
-  * This has lots of uses – what if we only want one copy of an instance to be allowed?
-  * This is how classes like` std::unique_ptr` work
+    * This has lots of uses – what if we only want one copy of an instance to be allowed?
+    * This is how classes like` std::unique_ptr` work
+      * **Move Constructible**, **Move Assignable**, but of neither **Copy Constructible** nor **Copy Assignable**
 
 default:
 
-* 
+* Declaring any user-defined constructor will make the default -- compiler produced one -- disappear without default setting.
 
-##### Rules
+  ```.cpp file
+  class PasswordManager {
+  	public: 
+  		PasswordManager();
+  		PasswordManager(const PasswordManager& other) = default; // set 'default' like this
+  }
+  ```
 
-* Rules of Zero: If the default SMFs work, don’t define your own!
+### Philosophy & Rules
 
-  * We should only define new ones when the default ones generated by the compiler won't work
-    * This usually happens when we work with dynamically allocated memory, like pointers to things on the heap.
+##### Rules of Zero
 
-  * If you don’t need a constructor or a destructor or copy assignment etc. Then simply don’t use it! 
+If the default SMFs work, don’t define your own!
 
-* If your class relies on objects/classes that already have these SMFs implemented, then there’s no need to reimplement this logic!
+* We should only define new ones when the default ones generated by the compiler won't work
+  * This usually happens when we work with **dynamically allocated memory**, like pointers to things on the heap.
 
-* If you need a custom destructor, then you also probably need to define a copy constructor and a copy assignment operator for your class 
 
-  * If you use a destructor, that often means that you are manually dealing with dynamic memory allocation/are generally just handling your own memory. 
+* If you don’t need a constructor or a destructor or copy assignment etc. Then simply don’t use it! 
+
+If your class relies on objects/classes that already have these SMFs implemented, then there’s no need to reimplement this logic!
+
+* They will take care of themselves(if their SMFs are correctly implemented)
+
+  ```.cpp file
+  class a_string_with_an_id() {
+   public:
+   /// getter and setter methods for our private variables
+   private:
+   int id;
+   std::string str;
+  }
+  a_string_with_an_id object;
+  ```
+
+  * `std::string` already has copy constructor, copy assignment, move constructor, and move assignment!
+    * So let it go!
+
+##### Rule of Three
+
+If you need a custom destructor, then you also **probably need** to define a copy constructor and a copy assignment operator for your class 
+
+* If you use a destructor, that often means that you are **manually dealing with dynamic memory allocation**/are generally just handling your own memory. 
   * Here, The compiler will not be able to automatically generate these for you, because of the manual memory management.
+
+##### Remember
+
+to do the pop quiz

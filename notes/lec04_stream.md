@@ -1,9 +1,7 @@
-# Stream
+# Lec 04 Stream
 > *a general input/output(IO) abstraction for C++*
 
-e.g. exempli gratia 例如    
-
-### **Stream** DEF
+### DEF
 > An abstraction for input/output.   
 > Streams convert between data and the string representation of data.  
 

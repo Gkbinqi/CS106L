@@ -2,7 +2,7 @@
 
 ### Why
 
-copy data is expensive, using roughly **35% of the power**
+Copying is expensive, using roughly **35% of the power**
 
 By move semantics, we can reduce unnecessary copy
 
@@ -26,6 +26,21 @@ int* data;
 Photo takePhoto(); // return a photo
 
 Photo selfie = takePhoto();
+
+Photo::Photo(int width, int height)
+: width(width)
+, height(height)
+, data(new int[width * height])
+{} 
+
+// copy constructor
+Photo::Photo(const Photo& other)
+: width(other.width)
+, height(other.height)
+, data(new int[width * height])
+{
+std::copy(other.data, other.data + width * height, data);
+}
 ```
 
 page 25:
