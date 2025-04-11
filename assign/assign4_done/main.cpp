@@ -109,8 +109,6 @@ int main(int argc, char** argv) {
   std::cout << ansi::fg_gray << "Loading dictionary... ";
 
   std::string dict_contents = read_stream(dict_stream);
-  // std::cout << "Dictionary contents: " << dict_contents << std::endl;
-  // std::cout << "printing ends." << std::endl;
 
   Timer tokenize_dict_timer { summary, "Tokenizing dictionary" };
   Corpus dictionary_tokens = tokenize(dict_contents);

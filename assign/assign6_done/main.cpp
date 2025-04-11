@@ -87,7 +87,7 @@ main(int argc, char* argv[])
     STUDENT_TODO: Populate the output string with the right information to print
     Please pay special attention to the README here
     ********************************************************/
-
+    
     std::string output = course.transform([](const Course& c){
       return "Found course: " + c.title + "," + c.number_of_units+ "," + c.quarter;
     }).or_else([](){
@@ -104,7 +104,7 @@ main(int argc, char* argv[])
 
     /*
     要用cpp23进行编译
-    47949@Wangbinqi MINGW64 "masked here"/CS106L/assign/assign6 (main)
+    47949@Wangbinqi MINGW64 ~/Desktop/CS106L/assign/assign6 (main)
     $ g++ -static-libstdc++ -std=c++20 main.cpp -o main
     main.cpp: In function 'int main(int, char**)':
     main.cpp:91:33: error: 'class std::optional<Course>' has no member named 'transform'
