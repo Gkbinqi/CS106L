@@ -324,30 +324,27 @@ int main()
  return 0;
 }
 ```
-##### Tricky: `const` and `auto`  
+##### Tricky: `const` and `auto` and `&`  
 
 * `auto`, `const auto`, `auto&`, `const auto&`
-* `auto var = expr'`
-  * copy, 之后这个var怎么样都无所谓
-  * 忽略 `expr` 的顶层 `const` 和引用。
-* `auto& var = expr`
-  * reference
-  * 保留 `expr` 的 `const` 属性。
 
 ```c++
 std::vector<int> vec{1, 2, 3};
 const std::vector<int> c_vec{7, 8};
 
-std::vector<int>& ref{vec};
-const std::vector<int>& c_ref{vec};
-
 // Here we are making copy
-auto copy = c_ref;         // a non-const copy
-const auto copy = c_ref;   // a const copy
+auto copy_v = vec; 
+const auto c_copy_v = vec;
+auto copy_cv = c_vec;
+const auto c_copy_cv = c_vec; 
+// for copy, since it won't affect the original, it doesn't matter whether we state the copy is const or not
 
 // Here we are making reference
-auto& a_ref = ref;         // a non-const reference
-const auto& c_aref = ref;  // a const reference
+auto& ref_v = vec;         
+const auto& c_ref_v = vec;
+auto& ref_cv = c_vec; // this will be invalid!         
+const auto& c_ref_cv = c_vec;
+// for ref, since we will affect the original, we should keep the const consistency.
 ```
 
 ### Compiling C++ program
