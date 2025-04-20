@@ -2,8 +2,6 @@
 
 ### Classes 
 
-> Why and What?
-
 ##### Why?
 
 * C has no objects
@@ -13,12 +11,15 @@
 ##### object-oriented-programming
 
 * Object-oriented-programming is centered around objects 
-* Focuses on design and implementation of classes! 
-* Classes are the user-defined types that can be declared as an object!
+  * Focuses on design and implementation of classes! 
+  * Classes are the user-defined types that can be declared as an object
+  * Containers are classes defined in the STL
+
 
 ##### struct & class
 
-struct is a class without **access restriction** & member functions
+* struct is a class without **access restriction**
+  * In assignment we will see this point
 
 ##### public, protected, private
 
@@ -200,7 +201,9 @@ public:
 * Inheritance allows us to design powerful and versatile abstractions that can help us model complex relationships in code.
 * These concepts are tricky – this lecture really highlights the power of C++
 
-### More about *Virtual* C++ 类继承中虚函数、纯虚函数、抽象类与虚基类总结(from deepseek)
+### More about *Virtual* 
+
+C++ 类继承中虚函数、纯虚函数、抽象类与虚基类总结
 
 ##### **1. 虚函数（Virtual Function）**
 
@@ -209,7 +212,7 @@ public:
 
 - **语法**
 
-  ```
+  ```c++
   class Base {
   public:
       virtual void func() { /* 默认实现 */ }
@@ -223,7 +226,7 @@ public:
 
 - **示例**
 
-  ```
+  ```c++
   class Derived : public Base {
   public:
       void func() override { /* 重写实现 */ }
@@ -237,7 +240,7 @@ public:
 
 - **语法**
 
-  ```
+  ```c++
   class AbstractBase {
   public:
       virtual void pureFunc() const = 0; // 纯虚函数
@@ -251,7 +254,7 @@ public:
 
 - **示例**
 
-  ```
+  ```c++
   class ConcreteClass : public AbstractBase {
   public:
       void pureFunc() const override { /* 必须实现 */ }
@@ -271,7 +274,7 @@ public:
 
 - **示例**
 
-  ```
+  ```c++
   AbstractBase* ptr = new ConcreteClass();
   ptr->pureFunc(); // 调用派生类实现
   ```
@@ -284,7 +287,7 @@ public:
 - **语法**
   在继承时使用 `virtual` 关键字：
 
-  ```
+  ```c++
   class Base { /* ... */ };
   
   class Derived1 : virtual public Base { /* ... */ };
@@ -300,7 +303,7 @@ public:
 
 - **初始化规则**
 
-  ```
+  ```c++
   class Final : public Derived1, public Derived2 {
   public:
       Final() : Base(), Derived1(), Derived2() { /* 直接初始化虚基类 */ }
@@ -326,7 +329,7 @@ public:
 
    - 可以！纯虚函数可以有默认实现，但派生类仍需显式重写：
 
-     ```
+     ```c++
      class AbstractBase {
      public:
          virtual void func() const = 0;

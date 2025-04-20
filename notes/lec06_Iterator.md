@@ -1,27 +1,34 @@
 # Iterator 2025/2/25
 
-> `for (const auto& elem : container)`
->
-> how dose this work?
+`for (const auto& elem : container)`
 
-### • Iterator Basics 
+* How does this work?
+* The Standard Template Library (STL)
+  * Containers
+  * Iterators(We are here now)
+  * Functors
+  * Algorithms
 
-> What even is an iterator? 
+### Iterator Basics 
 
-When we iterating a container, we need something to **track where we are** in a container… sort of like an index
+When we iterating a container, we need something to **track where we are** in a container… 
 
-* **Containers** and **iterators** **work together** to allow iteration
-* Here **Container** provides the `c.begin()` and `c.end()` interface.
+* sort of like an index
+
+* **Containers** and **iterators** *work together* to allow iteration
+* Here **Container** provides the `c.begin()` and `c.end()` interface
+
+  * `end()` never points to an element!
+    * Instead, it points one past the end of the container
+    * dereference a iterator points to `end()` will cause undefined behavior
+
+  * If `c` is empty, then `begin()` and `end()` are equal!
 
 ![image-20250225092856645](C:\Users\47949\Desktop\CS106L\notes\pic\lec06_container interface.png)
 
-* `end()` never points to an element! Instead, it points one past the end of the container
+All iterators provide these operation:
 
-![image-20250225092959667](C:\Users\47949\Desktop\CS106L\notes\pic\lec06_end.png)
-
-* If `c` is empty, then `begin()` and `end()` are equal!
-
-```
+```c++
 // Copy construction 复制一个c.begin() 到 it 来, 注意是**复制**
 auto it = c.begin();
 // Increment iterator forward 开始遍历 用++it转向下一个元素
@@ -32,9 +39,9 @@ auto elem = *it;
 if (it == c.end()) ...
 ```
 
-So, now we can build our own **range-based for loop**
+Now we can build our own **range-based for loop**
 
-```
+```c++
 std::vector<int> c{1,2,3,4,5};
 
 for (const auto& elem : c) {
@@ -51,7 +58,7 @@ What are the type of iterator?
 
 * Using `auto` avoids spelling out long iterator types
 
-```
+```c++
 std::map<int, int> m { {1, 2}, {3, 4}, {5, 6}};
 auto it = m.begin();
 auto elem = *it; // {1, 2}
@@ -61,40 +68,36 @@ std::map<int, int>::iterator it = m.begin();
 std::pair<int, int> elem = *it;
 ```
 
-### • Iterator Types 
+### Iterator Types 
 
-> Iterators are organized by their properties
+* All iterators provide four operations
 
-Now we can 
-
-* All iterators provide four operations:
-
-```
-auto it = c.begin(); // copy iterator
-++it; // move to next one
-*it; // deref
-it == c.end() // end check
-```
+  ```c++
+  auto it = c.begin(); // copy iterator
+  ++it; // move to next one
+  *it; // deref
+  it == c.end() // end check
+  ```
 
 * But most provide even more
 
-```
---it; // Move backwards 
-*it = elem; // Modify
-it += n; // Randomly access 
-it1 < it2 // Is before?
-```
+  ```c++
+  --it; // Move backwards 
+  *it = elem; // Modify
+  it += n; // Randomly access 
+  it1 < it2 // Is before?
+  ```
 
 ##### Input Iterator
 
 * Most basic kind of iterator
 * Allows us to **read** elements
+  * `auto elem = *it;`
 
-`auto elem = *it;`
 
 * when we want to access a filed(member) of a struct, using operator `->`
 
-```
+```c++
 struct Bibble {
 	int zarf;
 };
@@ -107,15 +110,16 @@ int m = it->zarf;
 ##### Output Iterator
 
 * Allows us to **write** elements
+  * `*it = elem;`
 
-`*it = elem;`
 
 ##### Forward Iterator
 
 * An input iterator that allows us to make multiple passes 
-* All **STL** container iterators fall here
+  * All **STL** container iterators fall here
 
-```
+
+```c++
 // Multi-pass guarantee
 it1 == it2; // if it is true
 // then
@@ -125,28 +129,31 @@ it1 == it2; // if it is true
 ##### Bidirectional Iterators(双向)
 
 * Allows us to move forwards and backwards
-* `std:map`, `std::set`
+  * `std:map`, `std::set`
 
-```
-auto it = m.end();
-// Get last element
+
+```c++
+auto it = m.end(); // Get last element
 --it; // we can move back
-auto& elem = *it;
+auto& elem = *it; // if the m is not empty, this works
 ```
 
 ##### Random Access Iterators
 
 * Allows us to quickly skip forward and backward
-* `std::vector`, `std::deque`
+  * `std::vector`, `std::deque`
+
 * Be careful not to go out of bounds!
 
-```
+```c++
 auto it2 = it + 5; // 5 ahead
 auto it3 = it2 - 2; // 2 back
 // Get 3rd element
 auto& second = *(it + 2);
 auto& second = it[2];
 ```
+
+### Bouns
 
 ##### Difference: ++i & i++
 
@@ -155,7 +162,7 @@ auto& second = it[2];
 
 * reason: `++it` avoids making an **unnecessary copy**
 
-```
+```c++
 // Prefix ++it
 // Increments it and returns a **reference** to same object
 Iterator& operator++(int);
@@ -170,9 +177,9 @@ Iterator operator++();
 
 ##### Why **Iterator Types** matter?
 
-* some algorithms require a certain iterator type!
+some algorithms require a certain iterator type!
 
-```
+```c++
 std::vector<int> vec{1,5,3,4};
 std::sort(vec.begin(), vec.end());
 // ok. begin/end are random access
@@ -184,16 +191,14 @@ std::sort(set.begin(), set.end());
 
 ##### Why have multiple iterator types?
 
-* Goal: provide a uniform abstraction over all containers
+* Goal: provide a **uniform abstraction** over all containers
 * Caveat(警告): the way that a container is implemented affects how you iterate through it
   * Skipping ahead 5 steps (random access) is a lot easier/faster when you have a sequence container (`std::vector`, `std::deque`) than associative (`std::map`, `std::set`)
   * C++ generally avoids providing you with slow methods by design, so that’s why you can’t do random access on a map::iterator
 
 ![image-20250225100438458](C:\Users\47949\Desktop\CS106L\notes\pic\lec06_STL Iterator Types.png)
 
-### • Pointers and Memory 
-
-> What is a pointer? What is memory?
+##### Pointers and Memory 
 
 * An ***iterator*** points to a ***container element***
 * A ***pointer*** points to ***any object***
@@ -208,12 +213,11 @@ std::sort(set.begin(), set.end());
 
 ##### Pointer
 
-> How do we get the address of a variable in C++
-
 * **A pointer is the address of a variable**
-* Essentially, a pointer is just a number usually presented using hex.(0x...)
+  * Essentially, a pointer is just a number usually presented using hex.(0x...)
 
-```
+
+```c++
 int x = 106;
 int* px = &x; // int* means px is a pointer to an int, & is the "address of" operator
 
@@ -228,9 +232,10 @@ std::cout << px << std::endl; // 0x50527c
 
 * Iterators have a **similar interface** to pointers
 * **iterator** is a **type alias**(类型别名)
-* Remember: `using` makes a **type alias**
+  * Remember: `using` makes a **type alias**
 
-```
+
+```c++
 template <typename T>
 class vector {
 	using iterator = /* some iterator type */;;
@@ -248,28 +253,12 @@ class vector {
 
 > In the real STL implementation, the actual type is not T*. But for all intents and purposes, you can think of it this way.
 
-### Recap
+##### At the end...
 
-• Iterator Basics 
+So, how do we implement other iterators?
+* for example, a `std::map::iterator`
 
-​	• An iterator allows us to step forward through a container 
-
-• Iterator Types 
-
-​	• Input, Output, Forward, Bidirectional, Random Access 
-
-• Pointers and Memory
-
-​	• A pointer points to an arbitrary C++ object in memory 
-
-​	• Pointers and iterators have the same interface
-
-
-
-* So how do we implement other iterators?
-  * for example, a `std::map::iterator`
-
-```
+```c++
 template <typename K, typename V>
 class map {
 	using iterator = ???????;
