@@ -1,46 +1,15 @@
-# lec 08 Template Classes
+# Lec 08: Template Classes & Const Correctness
 
 ### Template Classes
-
-> How can we generalize across different types? 
->
-> `std::vector<T>` How does `T` works?
 
 #####  Recap
 
 * `this`: a **pointer** to the current class instance
 * `->`: pointer dereference
 
-##### Old Template Example
-
-Here is a toy example:
-
-```.h file
-#define GENERATE_VECTOR(MY_TYPE) 
-class MY_TYPE##Vector { 
-public: 
-	MY_TYPE& at(size_t index); 
-	void push_back(const MY_TYPE& elem); 
-private: 
-	MY_TYPE* elems; 
-	size_t logical_size; 
-	size_t array_size; 
-}; 
-```
-
-* `#define ... `: **Preprocessor Macro**. Runs before compiler
-
-However, it has backwards:
-
-* Clunky syntax
-* Hard to type check
-* What if you forget to call macro? Or call it more than once?
-
 ##### Template
 
-> Key Idea: Templates automate code generation
-
-Here is a example(Not a faultless code, just for demostration)
+Here is a example(Not a faultless code, just for demonstration)
 
 ```.h file
 template <typename T> // Template Declaration
@@ -50,7 +19,7 @@ public:
 	T& at(size_t index);
 	void push_back(const T& elem);
 private:
-	T* elems;
+	T* elems; // T gets replaced when Vector is instantiated
 };
 ```
 
@@ -62,19 +31,24 @@ private:
 | `template<typename T> class Vector`     | `Vector<std::string>`                              |
 | This is a template. It’s **not a type** | This is a type. A.K.A a **template instantiation** |
 
-```
+```.cpp file
 void foo(std::vector<int> v);
 int main() {
 	std::vector<double> v;
-	foo(v); // error: No suitable user-defined conversion from "std::vector<double>" to "std::vector<int>" exists
+	foo(v); 
+    // error: No suitable user-defined conversion from "std::vector<double>" to "std::vector<int>" exists
+    // Vector<double> & Vector<int> two instantiations (of the same template) are completely different (runtime and compile-time) types
 }
 ```
 
-* Different instantiations of the same template are different (runtime and compile-time) types.
+* Different instantiations of the same template are different (runtime and compile-time) types
+* A template is like a factory
+  * Takes in type, generate another class
+
 
 Fun facts: `typename` are interchangeable
 
-```
+```.cpp file
 template<typename T, std::size_t N> // here std::size_t
 struct std::array { /* ... */ };
 // An array of exactly 5 strings
@@ -83,83 +57,78 @@ std::array<std::string, 5> arr;
 
 ##### Template in Details
 
-* Must copy the template declaration `template <…>` syntax in .cpp file
+###### Must copy the template declaration `template <…>` syntax in .cpp file
 
-  * Attention, **FOR EVERY MEMBER METHOD IN THE .cpp FILE!**
+* Attention, **FOR EVERY MEMBER METHOD IN THE .cpp FILE!**
 
-  * ```.cpp file
-    // Vector.cpp
-    template <typename T>
-    Vector<T>::Vector()
-    {
-      _size = 0;
-      _capacity = 4;
-      _data = new T[_capacity];
-    }
-    
-    template <typename T>
-    Vector<T>::~Vector()
-    {
-      delete[] _data;
-    }
-    
-    //...
-    
-    template <typename T>
-    typename Vector<T>::iterator Vector<T>::begin()
-    {
-      return _data;
-    }
-    
-    template <typename T>
-    typename Vector<T>::iterator Vector<T>::end()
-    {
-      return _data + _size;
-    }
-    ```
+* ```.cpp file
+  // Vector.cpp
+  template <typename T>
+  Vector<T>::Vector()
+  {
+    _size = 0;
+    _capacity = 4;
+    _data = new T[_capacity];
+  }
+  
+  template <typename T>
+  Vector<T>::~Vector()
+  {
+    delete[] _data;
+  }
+  
+  //...
+  
+  template <typename T>
+  typename Vector<T>::iterator Vector<T>::begin()
+  {
+    return _data;
+  }
+  
+  template <typename T>
+  typename Vector<T>::iterator Vector<T>::end()
+  {
+    return _data + _size;
+  }
+  ```
 
-* For template classes,  .h file must include .cpp file at bottom of file
+###### For template classes,  .h file must include .cpp file at bottom of file
 
-  * For non-template classes, the .cpp file includes the .h file
+* For non-template classes, the .cpp file includes the .h file
 
-  * For template classes, the .h file includes the .cpp file
+* For template classes, the .h file includes the .cpp file
 
-  * ```.h file
-    // Vector.h
-    template <typename T>
-    class Vector {
-    public:
-    	T& at(size_t i);
-    };
-    #include "Vector.cpp" // include .cpp file at the end of the .h file
-    ```
+  ```.h file
+  // Vector.h
+  template <typename T>
+  class Vector {
+  public:
+  	T& at(size_t i);
+  };
+  #include "Vector.cpp" // include .cpp file at the end of the .h file
+  ```
 
-  * ```.cpp file
-    // Vector.cpp
-    template <typename T>
-    T& Vector<T>::at(size_t i) {
-    	// Implementation...
-    }
-    ```
+  ```.cpp file
+  // Vector.cpp
+  template <typename T>
+  T& Vector<T>::at(size_t i) {
+  	// Implementation...
+  }
+  ```
 
-  * Why?
+* Why?
 
-    * Template .h must include .cpp due to the way template code generation is implemented in the compiler (and linker)
-    * Don’t worry too much about the why (unless you’re curious!)
+  * Template .h must include .cpp due to the way template code generation is implemented in the compiler (and linker)
+  * Don’t worry too much about the why
 
 * `typename` is the same as `class`
-
   * Just know that `typename` and `class` are the same semantically here.
 
 ### Code Demo
 
-> Implementing a template class 
-
 More details in `./code/lec08_Vector.h`, here we implement a vector by ourselves.
 
 ### `const` Correctness
-
-> Unlocking the power of `const`
 
 ##### const interface
 
@@ -180,7 +149,7 @@ More details in `./code/lec08_Vector.h`, here we implement a vector by ourselves
 
 * Now back to our Vector class
 
-  ```
+  ```c++
   template<class T>
   class Vector {
   public:
@@ -192,31 +161,40 @@ More details in `./code/lec08_Vector.h`, here we implement a vector by ourselves
   };
   ```
 
+  ```c++
+  // in .cpp file we declare const like that
+  template <class T>
+  size_t Vector<T>::size() const {
+      // in a const method this has a type `const Vector<T>*`
+  	return logical_size;
+  }
+  ```
+  
   We have add `const` interface to these methods, but there are still more problems.
-
+  
   * `const` consumers can modify!
 
     * Since we return a non-const reference, we can assign to it!
 
-    * ```.cpp file
+      ```.cpp file
       T& at(size_t index) const;
       void oops(const Vector<int>& v) {
       	v.at(0) = 42;//Remember, since v is const, we shouldn’t be able to modify it
       }
       ```
-
+  
   * How about return a const reference `const T& at(size_t index) const;`
 
-    *  non-const consumers can’t modify!
-
-    * ```
+    * non-const consumers can’t modify!
+  
+      ```c++
       const T& at(size_t index) const;
       void ooh(Vector<int>& v) {
       	v.at(0) = 42;// now we can't update elements sinze `at` return a const T& 
       }
       ```
-
-    * ```
+  
+      ```
       lec08_main.cpp:14:17: error: assignment of read-only location '(& v)->Vector<int>::at(i)'
          14 |         v.at(i) = v.at(0);
             |         ~~~~~~~~^~~~~~~~~
@@ -312,6 +290,7 @@ here, we split it into parts:
 * `const_cast<Vector<T>&>(*this).findElement(value);`
   * Now we got a `Vector<T>&`, and this instance will call non-const type `findElement` method
   * that is `T& Vector<T>::findElement(const T& value)`
+* Then we get the return value of `T& Vector<T>::findElement(const T& value)`, a `T&`, then return it in `const T&` way.
 
 ##### const-cast details
 
@@ -319,15 +298,13 @@ When to use const_cast?
 
 * Short answer: just about never
 * **`const_cast` tells the compiler: “don’t worry I’ve got this”**
-* If you need a mutable value, just don’t add const in the first place
-* Valid uses of const_cast are few and far between
-* All in all, a tricky, powerful but rarely used way.
+  * If you need a mutable value, just don’t add const in the first place
+
+* Valid uses of `const_cast` are few and far between
+  * All in all, a tricky, powerful but rarely used way.
+
 
 ##### A C++ party trick: mutable keyword
-
-> `const_cast` makes an entire object mutable
->
-> Is there anything more fine-grained?
 
 Like `const_cast`, `mutable` circumvents `const` protections. Use it carefully!
 
@@ -345,30 +322,12 @@ mutable example: storing debug info
 
 ```c++
 struct CameraRay {
-Point origin;
-Direction direction;
-mutable Color debugColor;
+	Point origin;
+	Direction direction;
+	mutable Color debugColor;
 }
 void renderRay(const CameraRay& ray) {
 ray.debugColor = Color.Yellow; // Show debug ray
 /* Rendering logic goes here ... */
 }
 ```
-
-### Recap
-
-• Template Classes 
-
-​	• Template classes generalize logic across types! 
-
-• Code Demo 
-
-​	• We implemented an IntVector, and then a templated Vector! 
-
-• Const Correctness 
-
-​	• const makes an entire object read-only 
-
-​	• Mark methods const when they don’t modify the object 
-
-​	• const_cast and mutable can circumvent compiler in rare cases!

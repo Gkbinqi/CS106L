@@ -24,8 +24,4 @@ assign7: 2025/4/7 Part1 30min Part2 30min 简单实现自己的unique_ptr以及`
 
 cur: rev. 还有很多细节要再仔细看看const corectness, Iterator, Template Class & Template Function, Algorithms, lambda, ranges&view, SMFs, move, RAII...
 
-这段时间会复习一遍课程和笔记, 之前的笔记有很多不理解的地方, 悬而未决的问题. 现在可以去解决了
-
-已完成(lec&note)：lec01 ~ lec06
-
-附: 善用ai帮助学习, 以及, deepseek出来一段时间后GPT变聪明了好多, 有压力才有动力吗😂
+已完成(lec&note)：lec01 ~ lec08
