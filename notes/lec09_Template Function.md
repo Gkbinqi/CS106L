@@ -1,18 +1,8 @@
 # lec 09 Template Function
 
-### Recap
-
-What is a template class? 
-
-​	• A blueprint for creating classes with generic types 
-
-Why would you use a template class? 
-
-​	• Template classes eliminate code redundancy!
-
 ### Template Functions
 
-```
+```c++
 template <typename T>
 T min(T a, T b) {
 	return a < b ? a : b;
@@ -31,7 +21,7 @@ T min(T a, T b) {
 
   * problem1:  `min("Jacob", "Fabio");`, these two will have a type `const char*`
 
-    * which means it will be a **pointer comparasion**
+    * which means it will be a **pointer comparison**
 
   * solution: We can always use explicit instantiation in ambiguous cases like this
 
@@ -44,7 +34,7 @@ T min(T a, T b) {
 
   * solution: make the template more flexable
 
-    * ```
+    * ```c++
       template <typename T, typename U>
       auto min(const T& a, const U& b) { // let the compiler figure the return type out with auto
       	return a < b ? a : b;
@@ -76,7 +66,7 @@ TIterator find(TIterator begin, TIterator end, TValue value) {
 
 But, here is one problem
 
-```
+```c++
 StanfordID jacob { "Jacob", "jtrb" };
 StanfordID fabio { "Fabio", "fabioi" };
 min<StanfordID>(jacob, fabio);
@@ -167,16 +157,7 @@ template <Comparable T>
 T min(const T& a, const T& b);
 ```
 
-Concepts greatly improve compiler errors
-
-##### Recap
-
-* Two reasons to use concepts
-  * Better compiler error messages
-  * Better IDE support (Intellisense/autocomplete, etc.)
-* Concepts are still a new feature
-  * STL does not yet support them fully
-  * We’ll talk more about this on lec10
+* What's more, Concepts greatly improve compiler errors
 
 ### Variadic Templates(可变参数)
 
@@ -205,16 +186,6 @@ page 107 ~ 122
 
 it will generate a series of function along the way to the base case.
 
-##### recap
-
-* Compiler generates any number of overloads using recursion
-  * This allows us to support any number of function parameters
-* For more advanced variadic templates, check the hidden slides! page 107 ~ 122
-  * If you’re curious, this technique is how std::tuple works!
-* Instantiation happens at **compile time**
-  * Templates do work at compile time. Can we use this to our advantage?
-    * the answer is, yes.
-
 ### Template Meta-programming
 
 > run code at **compile time**
@@ -238,8 +209,6 @@ All of **Template instantiations** for Factorial<7> happens at compile-time!
 
 ##### `constexpr`/`consteval`
 
-> An institutionalization of template metaprogramming (new in C++20)
-
 ```c++
 constexpr size_t factorial(size_t n) { // constexpr: try to run me at compile time
 	if (n == 0) return 1;
@@ -252,8 +221,6 @@ consteval size_t factorial(size_t n) { // consteval: MUST RUN ME AT COMPILE TIME
 }
 ```
 
-
-
 ### Recap
 
 When should I use templates?
@@ -264,5 +231,3 @@ When should I use templates?
   * `concepts`
 * I don’t want to wait until runtime
   * Template metaprogramming, `constexpr`/`consteval`
-
-Next Time: Functions and Algorithms Writing smarter, more flexible algorithms

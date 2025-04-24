@@ -24,4 +24,4 @@ assign7: 2025/4/7 Part1 30min Part2 30min 简单实现自己的unique_ptr以及`
 
 cur: rev. 还有很多细节要再仔细看看const corectness, Iterator, Template Class & Template Function, Algorithms, lambda, ranges&view, SMFs, move, RAII...
 
-已完成(lec&note)：lec01 ~ lec08
+已完成(lec&note)：lec01 ~ lec10

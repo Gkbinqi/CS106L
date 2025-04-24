@@ -2,9 +2,9 @@
 
 ### Functions and Lambdas
 
-> How can we represent functions as variables in C++?
+Predicate
 
-* Definition: A **predicate** is a boolean-valued function
+* Definition: A **predicate** is a Boolean-valued function
 
 ```c++
 bool isDivisible(int n, int d)
@@ -49,7 +49,7 @@ It find_if(It first, It last, Pred pred) {
 }
 ```
 
-* **Passing functions allows us to generalize an algorithm with user-defined behaviour**
+* **Passing functions allows us to generalize an algorithm with user-defined behavior**
 
 ```c++
 bool isVowel(char c) {
@@ -82,7 +82,7 @@ Now here is another problem:
 
 * We want to give our function extra state without introducing another parameter
 
-* ```c++
+  ```c++
   bool lessThan5(int x) { return x < 5; }
   bool lessThan6(int x) { return x < 6; }
   bool lessThan7(int x) { return x < 7; }
@@ -93,7 +93,7 @@ Now here is another problem:
 
 * That's really redundant, how can we solve this?
 
-##### Lambda
+##### ⭐Lambda
 
 Lambda Syntax
 
@@ -108,7 +108,7 @@ auto lessThanN = [n](int x) {
 * `()`: **Parameters** Function parameters, exactly like a normal function
 * `{}`: **Function body** Exactly as a normal function, except only parameters and captures are in-scope
 
-A note on captures
+A note on Lambda
 
 ```c++
 auto lambda = [capture-values](arguments) {
@@ -117,15 +117,28 @@ auto lambda = [capture-values](arguments) {
 
 /*
 [x](arguments) // captures x by value (makes a copy)
-[x&](arguments) // captures x by reference
+[&x](arguments) // captures x by reference
 [x, y](arguments) // captures x, y by value
 [&](arguments) // captures everything by reference
 [&, x](arguments) // captures everything except x by reference
 [=](arguments) // captures everything by value
 */
-```
 
-We don’t have to use captures!
+/*e. g. in assign04*/
+auto view = source 
+  | rv::filter([&dictionary](const auto& token){
+    return !dictionary.contains(token.content);
+  }) 
+  | rv::transform([&dictionary](const auto& token){
+    auto likely = dictionary | rv::filter([&token](const auto& word){
+      return levenshtein(token.content, word) == 1;});
+    std::set<std::string> suggestion(likely.begin(), likely.end());
+    return Mispelling{token, suggestion};
+  })
+  | rv::filter([](const auto& mis){
+    return !mis.suggestions.empty();
+  });
+```
 
 * Lambdas are good for making functions on the fly
 
@@ -145,13 +158,13 @@ auto it = find_if(corlys.begin(), corlys.end(),
 
   * Uses implicit instantiation! Compiler figures out types when function is called
 
-  * ```
+  * ```c++
     auto lessThanN = [n](auto x) {
     	return x < n;
     };
     ```
 
-  * ```
+  * ```c++
     template <typename T>
     auto lessThanN = [n](T x) {
     	return x < n;
@@ -160,8 +173,6 @@ auto it = find_if(corlys.begin(), corlys.end(),
 
 
 ### Algorithms
-
-> Revisiting an old algorithm you may have seen before in modern C++
 
 ##### functor & lambdas
 
@@ -216,7 +227,7 @@ auto it = find_if(corlys.begin(), corlys.end(),
 
 #####  Functions & Lambdas Recap
 
-* Use functions/lambdas to pass around behaviour as variables
+* Use functions/lambdas to **pass around behavior as variables**
 
 * Aside: `std::function` is an overarching(非常重要的) type for functions/lambdas
 
@@ -247,7 +258,8 @@ Where do we use functions & lambdas?
   * `std::max_element(ForwardIt first, ForwardIt last, Compare comp);`
     * Finds the maximum element in [first, last] according to comparison comp
   * ...
-* Things you can do with the STL are really countless, and **all in their most general form!**
+*  Things you can do with the STL are really countless, and **all in their most general form!**
+* At most cases we should use STL 
   * page 69
 * ![image-20250305095024444](C:\Users\47949\Desktop\CS106L\notes\pic\lec10_STL usage.png)
 
@@ -257,9 +269,63 @@ details in lec_10 code.
 
 ### Ranges and Views
 
-> A brand new (C++26), functional approach to C++ algorithms
->
-> 太新了 了解即可
+Ranges are a **new version of the STL**
 
 * Definition: A range is anything with a begin and end
 
+  * `std::vector`
+  * `std::map<K, V>`
+  * and so on
+
+* Using ranges we can just pass the range to the function
+
+  ```c++
+  int main() {
+  	std::vector<char> v = {'a', 'b', 'c', 'd', 'e’};
+  	auto it = std::ranges::find(v, 'c');
+  }
+  ```
+
+* Range algorithms are constrained
+
+  * They make use of the new STL concepts
+    * better error message
+
+
+Views is a way to compose algorithms
+
+* A view is a range that lazily adapts another range
+
+  * There won't be actual effort made during the process
+  * Actual operation will take place at the end(actual changes in memory)
+
+* A view is a range that lazily transforms its underlying range, one element at a time
+
+  * For ranges
+
+    ```c++
+    std::ranges::sort(v);// This actually sorts vec, RIGHT NOWWW!!!!
+    ```
+
+  * For views
+
+    ```c++
+    auto view = letters
+    	| std::ranges::views::filter(isVowel)
+    	| std::ranges::views::transform(toupper);
+    std::vector<char> upperVowel = std::ranges::to<std::vector<char>>(view); // actual operation happens here
+    ```
+
+* Filter and transform with views
+
+  * Views are composable
+
+  * We can chain views together use operator|
+
+    ```c++
+    std::vector<char> letters = {'a','b','c','d','e'};
+    std::vector<char> upperVowel = letters
+    | std::ranges::views::filter(isVowel)
+    | std::ranges::views::transform(toupper)
+    | std::ranges::to<std::vector<char>>();
+    ```
