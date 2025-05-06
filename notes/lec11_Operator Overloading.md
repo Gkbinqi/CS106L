@@ -46,7 +46,7 @@ There are two ways to overload:
 
 `bool operator< (const StanfordID& lhs, const StanfordID& rhs);`
 
-* Both the left and right hand side of the operator are passed in in non-member operator overloading!
+* Both the left and right hand side of the operator are passed in in non-member operator overloading
 
 * How can we access the variables of the class using a non-member overloading?(now we can't use `this->`!)
 
@@ -64,11 +64,12 @@ There are two ways to overload:
     	// constructor for our StudentID
     	StanfordID(std::string name, std::string sunet, int idNumber);
     	// many methods here...
-     
+     	
+        // our friend Non-member operator overloading
     	friend bool operator < (const StanfordID& lhs, const StanfordID& rhs);
     }
     ```
-
+    
   * ```.cpp file
     #include "StanfordID.h"
     bool operator< (const StanfordID& lhs, const StanfordID& rhs)

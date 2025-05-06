@@ -33,8 +33,6 @@ catch { // the "else" statement
 
 ##### RAII: Resource Acquisition is Initialization
 
->  it’s a concept that is very emblematic(特有的 典型的 标志性的) in C++, among other languages.
-
 what is RAII? 
 
 ● All resources used by a class should be **acquired in the constructor**
@@ -53,7 +51,8 @@ e.g.:
 void cleanDatabase(mutex& databaseLock, map<int, int>& db) {
 	lock_guard<mutex> lg(databaseLock);
 	// now no other thread of machine can change db or modify the db
-	// if exception is thrown here
+	...somecode
+    // if exception is thrown here
 
 	// no explicit unlock necessary here, lg will handle all the stuff!
 }
@@ -80,7 +79,8 @@ There are three types of RAII-compliant pointers:
   * Uniquely owns its resource
   * Can’t be copied
 * `std::shared_ptr`
-  * Can make copies, **destructed when the <u>underlying memory</u> goes out of scope**
+  * Can make copies
+  * **destructed when the <u>underlying memory</u> goes out of scope**
 * `std::weak_ptr`
   * A class of pointers designed to **mitigate circular dependencies**
 
@@ -109,7 +109,7 @@ can't be copied
 
 Shared pointers get around our issue of trying to copy
 
-* `std::unique_ptr`’s by not deallocating the underlying memory until all shared pointers go out of scope!
+* Deallocating the underlying memory until all shared pointers go out of scope!
 
 ![image-20250401094924241](C:\Users\47949\Desktop\CS106L\notes\pic\lec15_shared ptr.png)
 
@@ -117,7 +117,7 @@ Shared pointers get around our issue of trying to copy
 
 Weak pointers are a way to avoid circular dependencies in our code so that we don’t leak any memory.
 
-不太明白 之后再看
+
 
 ##### Initializing smart pointers
 

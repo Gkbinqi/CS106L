@@ -125,6 +125,7 @@ auto lambda = [capture-values](arguments) {
 */
 
 /*e. g. in assign04*/
+using rv = ranges::view;
 auto view = source 
   | rv::filter([&dictionary](const auto& token){
     return !dictionary.contains(token.content);

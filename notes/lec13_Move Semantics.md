@@ -44,11 +44,11 @@ std::copy(other.data, other.data + width * height, data);
 ```
 
 page 25:
-problem: since `takePhoto()` will return a **right-value**, the resource `takePhoto()` get will be destoried immediately after this line of code  while `Photo selfie` still need to require and initialize it's resource. 
+problem: since `takePhoto()` will return a **right-value**, the resource `takePhoto()` get will be destoryed immediately after this line of code while `Photo selfie` still need to require and initialize it's resource. 
 
 How about just **move** the resource of `takePhoto()` to `selfie`?
 
-It's ok, remember to set the r-value's resource(especially dynamic allocated memory) to `nullptr` so that the resource we get wont be deleted by the r-value's destructor. page 34
+⭐It's ok, remember to set the r-value's resource(especially dynamic allocated memory) to `nullptr` so that the resource we get wont be deleted by the r-value's destructor. page 34
 
 ##### Copy vs Move
 
@@ -100,7 +100,7 @@ l-value and r-value have different reference way
 
 We can do whatever we want with `Photo&& pic`, it’s temporary!
 
-lvalue references
+l-value references
 
 * Syntax: Type&
 * Persistent, must keep object in valid state after function terminates
@@ -122,15 +122,13 @@ Now we have two special type of SMFs
 
 * Solution: force move semantics by using `std::move`
 * `std::move` doesn’t do anything special!
-  * `std::move` just type casts an lvalue to an rvalue
+  * `std::move` just type casts an l-value to an rvalue
   * ![image-20250307100010756](C:\Users\47949\Desktop\CS106L\notes\pic\lec13_stdmove.png)
 
-* Like `const_cast`, we ”opt in” to potentially error-prone behaviour
+* Like `const_cast`, we ”opt in” to potentially error-prone behavior
   * What if we try to use an object after it’s been moved!
 * Try to avoid explicitly using `std::move` unless you have good reason!
   * E.g. performance really matters, and you know for sure the object won’t be used!
-
-
 
 Now we have many SMFs
 
@@ -141,10 +139,10 @@ Now we have many SMFs
   * Example: Compiler generated SMFs of Post will call SMFs of Photo and std::string
 * Rule of Three
   * If a class manages external resources, we must define copy assignment/constructor
-    * Rule of Three: If you need any one of these, you need them all:
-      * Destructor
-      * Copy Assignment
-      * Copy Constructor
+  * If you need any one of these, you need them all:
+    * Destructor
+    * Copy Assignment
+    * Copy Constructor
   * If we don’t, compiler-generated SMF won’t copy underlying resource
     * This will lead to bugs, e.g. two Photo’s referring to the same underlying data
 * Rule of Five

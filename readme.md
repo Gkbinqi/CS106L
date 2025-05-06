@@ -22,6 +22,4 @@ assign6: 2025/4/6 用时40min lec14后即可开始 简单复习lambda和std 有�
 
 assign7: 2025/4/7 Part1 30min Part2 30min 简单实现自己的unique_ptr以及`std::move`试用
 
-cur: rev. 还有很多细节要再仔细看看const corectness, Iterator, Template Class & Template Function, Algorithms, lambda, ranges&view, SMFs, move, RAII...
-
-已完成(lec&note)：lec01 ~ lec10
+HW1: 2025/5/6
